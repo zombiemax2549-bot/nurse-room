@@ -38,18 +38,7 @@
       --red-l:    #2d1a1a;
     }
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    body { 
-      font-family:'Sarabun',sans-serif; 
-      background: var(--bg);
-      /* 🛠️ แก้ไขจุดที่ 1: เปลี่ยนชื่อไฟล์พื้นหลังเป็น IMG_8809.jpeg ให้ตรงกับ GitHub ของมึง */
-      background-image: linear-gradient(rgba(244, 241, 238, 0.85), rgba(244, 241, 238, 0.85)), url('IMG_8809.jpeg');
-      background-size: cover;
-      background-position: center;
-      background-attachment: fixed;
-      min-height:100vh; 
-      color:var(--text); 
-      transition:background var(--tr),color var(--tr); 
-    }
+    body { font-family:'Sarabun',sans-serif; background:var(--bg); min-height:100vh; color:var(--text); transition:background var(--tr),color var(--tr); }
 
     header {
       background:linear-gradient(135deg,var(--red-d) 0%,var(--red) 55%,#e74c3c 100%);
@@ -58,24 +47,7 @@
       box-shadow:0 3px 20px rgba(0,0,0,0.3);
       position:sticky; top:0; z-index:100;
     }
-    .logo-circle { 
-      width:52px;
-      height:52px;
-      background: #fff;
-      border:2px solid rgba(255,255,255,0.4);
-      border-radius:50%;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      overflow: hidden;
-      flex-shrink:0; 
-    }
-    .logo-circle img {
-      width: 90%;
-      height: 90%;
-      object-fit: contain;
-    }
-
+    .logo-circle { width:52px;height:52px;background:rgba(255,255,255,0.18);border:2px solid rgba(255,255,255,0.4);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0; }
     header h1 { font-family:'Prompt',sans-serif;font-size:1.1rem;font-weight:700;line-height:1.3; }
     header p  { font-size:0.78rem;opacity:0.85;margin-top:1px; }
     #live-clock { font-size:0.7rem;opacity:0.75;margin-top:2px;font-family:'Prompt',sans-serif; }
@@ -102,15 +74,12 @@
     .card-body { padding:20px; }
 
     .grid2 { display:grid;grid-template-columns:1fr 1fr;gap:12px; }
-    .form-group { margin-bottom:14px; position: relative; }
+    .form-group { margin-bottom:14px; }
     label.lbl { display:block;font-size:0.82rem;font-weight:600;color:var(--text2);margin-bottom:4px; }
     label.lbl .req { color:var(--red); }
     input, select, textarea { width:100%;padding:9px 12px;border:1.5px solid var(--border);border-radius:9px;font-family:'Sarabun',sans-serif;font-size:0.88rem;color:var(--text);background:var(--surface2);transition:border-color 0.2s,box-shadow 0.2s,background var(--tr);outline:none; }
     input:focus, select:focus, textarea:focus { border-color:var(--red);box-shadow:0 0 0 3px rgba(192,57,43,0.12);background:var(--surface); }
     textarea { resize:vertical;min-height:76px; }
-
-    .id-counter { font-size: 0.75rem; color: var(--text2); font-weight: bold; margin-top: 4px; display: block; text-align: right; }
-    .id-counter.complete { color: var(--green); }
 
     .severity-btn { display:none; }
     .severity-group { display:flex;gap:8px;flex-wrap:wrap;margin-top:4px; }
@@ -180,7 +149,7 @@
 
     .modal-overlay { display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:300;align-items:center;justify-content:center;padding:16px; }
     .modal-overlay.open { display:flex; }
-    .modal { background:var(--surface);border-radius:18px;padding:26px 30px;max-width:440px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,0.3);animation:pop .25s ease;transition:background var(--tr); }
+    .modal { background:var(--surface);border-radius:18px;padding:26px 30px;max-width:500px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,0.3);animation:pop .25s ease;transition:background var(--tr); }
     @keyframes pop { from{transform:scale(0.9);opacity:0}to{transform:scale(1);opacity:1} }
     .modal h3 { font-family:'Prompt',sans-serif;font-size:1rem;color:var(--red-d);margin-bottom:14px; }
     [data-theme="dark"] .modal h3 { color:#f5b7b1; }
@@ -189,6 +158,11 @@
     .modal-actions { margin-top:18px;display:flex;gap:8px;justify-content:flex-end; }
     .btn-close-modal { padding:8px 16px;background:var(--surface2);border:1.5px solid var(--border);border-radius:8px;cursor:pointer;font-family:'Sarabun',sans-serif;font-size:0.86rem;color:var(--text); }
     .btn-print-modal { padding:8px 16px;background:var(--blue);border:none;border-radius:8px;cursor:pointer;font-family:'Sarabun',sans-serif;font-size:0.86rem;color:#fff;font-weight:600; }
+
+    /* New CSS for Images */
+    .img-preview-container { margin-top: 8px; position: relative; width: 100px; height: 100px; border: 2px dashed var(--border); border-radius: 8px; overflow: hidden; display: none; }
+    .img-preview-container img { width: 100%; height: 100%; object-fit: cover; }
+    .modal-img { width: 100%; max-height: 200px; object-fit: contain; border-radius: 8px; margin-top: 10px; border: 1px solid var(--border); }
 
     @media print {
       body * { visibility:hidden; }
@@ -211,51 +185,15 @@
     #toast { position:fixed;bottom:24px;right:24px;color:#fff;padding:12px 18px;border-radius:10px;font-size:0.86rem;box-shadow:0 8px 24px rgba(0,0,0,0.25);transform:translateY(80px);opacity:0;transition:all 0.35s ease;z-index:999;max-width:320px; }
     #toast.show { transform:translateY(0);opacity:1; }
 
-    @media (max-width:1024px) { 
-      .stats-row { grid-template-columns:repeat(2,1fr); gap:10px; } 
-      .dash-grid { grid-template-columns:1fr; } 
-    }
-    
-    @media (max-width:768px) { 
-      .tab-content { padding:16px 12px 48px; } 
-      header { padding:12px 16px; gap:12px; flex-wrap: wrap; } 
-      header h1 { font-size:1rem; } 
-      .logo-circle { width:44px; height:44px; }
-      .tab-nav { padding:0 12px; } 
-      .tab-btn { padding:10px 14px; font-size:0.82rem; }
-      .header-right { width: 100%; justify-content: space-between; margin-top: 5px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 8px; }
-      .header-badge { display: inline-block; font-size: 0.7rem; } 
-    }
-    
-    @media (max-width:540px) { 
-      .grid2 { grid-template-columns:1fr; gap: 0; } 
-      .stats-row { grid-template-columns:1fr 1fr; gap: 8px; } 
-      .stat-box { padding: 12px; gap: 8px; }
-      .stat-icon { font-size: 1.5rem; }
-      .stat-val { font-size: 1.4rem; }
-      .stat-lbl { font-size: 0.65rem; }
-      .card-body { padding: 15px; }
-      .table-toolbar { gap: 6px; padding: 10px; }
-      .search-box { width: 100%; min-width: 100%; }
-      .filter-select { flex: 1; font-size: 0.8rem; padding: 6px; }
-      .btn-export, .btn-sound { padding: 8px; font-size: 0.78rem; }
-      table thead { display: none; }
-      table, table tbody, table tr, table td { display: block; width: 100%; }
-      table tr { margin-bottom: 12px; border: 1px solid var(--border); border-radius: 8px; padding: 8px; background: var(--surface); }
-      table td { text-align: right; padding: 6px 8px; font-size: 0.82rem; border-bottom: 1px dashed var(--border); }
-      table td::before { content: attr(data-label); float: left; font-weight: bold; color: var(--text2); font-size: 0.78rem; }
-      table td:last-child { border-bottom: none; text-align: center; }
-      table td:last-child::before { display: none; }
-      .action-btn { margin: 2px; padding: 6px 12px; font-size: 0.85rem; }
-    }
+    @media (max-width:1024px) { .stats-row{grid-template-columns:repeat(2,1fr)} .dash-grid{grid-template-columns:1fr} }
+    @media (max-width:768px) { .tab-content{padding:16px 14px 48px} header{padding:12px 14px} header h1{font-size:0.95rem} .tab-nav{padding:0 14px} .header-badge{display:none} }
+    @media (max-width:540px) { .grid2{grid-template-columns:1fr} .stats-row{grid-template-columns:1fr 1fr} }
   </style>
 </head>
 <body>
 
 <header>
-  <div class="logo-circle">
-    <img src="IMG_8808.jpeg" alt="ตราวิทยาลัย">
-  </div>
+  <div class="logo-circle">🏥</div>
   <div>
     <h1>ห้องพยาบาล – วิทยาลัยเทคนิคหาดใหญ่</h1>
     <p>ระบบลงทะเบียนนักเรียนเข้ารับบริการ</p>
@@ -277,6 +215,7 @@
   <button class="tab-btn" data-tab="tab-dash">📊 Dashboard</button>
 </div>
 
+<!-- TAB 1 -->
 <div class="tab-content active" id="tab-register">
   <div class="stats-row">
     <div class="stat-box red"><div class="stat-icon">👤</div><div><div class="stat-val" id="s-total">–</div><div class="stat-lbl">ทั้งหมดวันนี้</div></div></div>
@@ -287,11 +226,7 @@
   <div class="card">
     <div class="card-header"><span>📝</span> กรอกข้อมูลการลงทะเบียน</div>
     <div class="card-body">
-      <div class="form-group">
-        <label class="lbl">เลขประจำตัวนักเรียน (11 หลัก) <span class="req">*</span></label>
-        <input type="text" id="f-id" placeholder="เช่น 66309010001" maxlength="11" inputmode="numeric"/>
-        <span class="id-counter" id="id-warn">0 / 11 หลัก</span>
-      </div>
+      <div class="form-group"><label class="lbl">เลขประจำตัวนักเรียน <span class="req">*</span></label><input type="text" id="f-id" placeholder="เช่น 66010001" maxlength="10" inputmode="numeric"/></div>
       <div class="grid2">
         <div class="form-group"><label class="lbl">ชื่อ <span class="req">*</span></label><input type="text" id="f-fname" placeholder="ชื่อ"/></div>
         <div class="form-group"><label class="lbl">นามสกุล <span class="req">*</span></label><input type="text" id="f-lname" placeholder="นามสกุล"/></div>
@@ -307,6 +242,16 @@
         </div>
       </div>
       <div class="form-group"><label class="lbl">อาการ / เหตุผลที่มา <span class="req">*</span></label><textarea id="f-symptom" placeholder="ระบุอาการเบื้องต้น เช่น ปวดหัว มีไข้ ปวดท้อง บาดเจ็บ..."></textarea></div>
+      
+      <!-- New Photo Upload Field -->
+      <div class="form-group">
+        <label class="lbl">แนบรูปภาพ (ถ้ามี)</label>
+        <input type="file" id="f-image" accept="image/*" style="padding: 5px;"/>
+        <div class="img-preview-container" id="imgPreviewCont">
+          <img src="" id="imgPreview" alt="preview"/>
+        </div>
+      </div>
+
       <div class="form-group">
         <label class="lbl">ระดับความเร่งด่วน</label>
         <input type="radio" name="sev" id="sev-low"  class="severity-btn" value="ไม่เร่งด่วน" checked/>
@@ -325,6 +270,7 @@
   </div>
 </div>
 
+<!-- TAB 2 -->
 <div class="tab-content" id="tab-list">
   <div class="card">
     <div class="card-header"><span>📋</span> รายชื่อนักเรียนเข้ารับบริการ<span style="margin-left:auto;font-size:0.72rem;opacity:0.85;">🔴 Live Real-time</span></div>
@@ -333,7 +279,7 @@
       <select class="filter-select" id="filterDept"><option value="">ทุกแผนก</option><option>ช่างยนต์</option><option>ช่างไฟฟ้า</option><option>ช่างอิเล็กทรอนิกส์</option><option>ช่างกลโรงงาน</option><option>ช่างเชื่อมโลหะ</option><option>เทคโนโลยีสารสนเทศ</option><option>การบัญชี</option><option>การตลาด</option><option>คอมพิวเตอร์ธุรกิจ</option><option>ช่างก่อสร้าง</option></select>
       <select class="filter-select" id="filterStatus"><option value="">ทุกสถานะ</option><option value="รอรับบริการ">รอรับบริการ</option><option value="เสร็จสิ้น">เสร็จสิ้น</option></select>
       <button class="btn-sound" id="soundBtn">🔔 เสียง</button>
-      <button class="btn-export" id="exportBtn">📥 CSV</button>
+      <button class="btn-export">📥 CSV</button>
     </div>
     <div style="overflow-x:auto;">
       <table>
@@ -344,6 +290,7 @@
   </div>
 </div>
 
+<!-- TAB 3 -->
 <div class="tab-content" id="tab-dash">
   <div class="stats-row" style="margin-bottom:24px;">
     <div class="stat-box red"><div class="stat-icon">👤</div><div><div class="stat-val" id="d-total">–</div><div class="stat-lbl">ทั้งหมดวันนี้</div></div></div>
@@ -357,6 +304,7 @@
   </div>
 </div>
 
+<!-- MODAL -->
 <div class="modal-overlay" id="detailModal" onclick="closeModal(event)">
   <div class="modal">
     <h3>📋 รายละเอียดการลงทะเบียน</h3>
@@ -368,6 +316,7 @@
   </div>
 </div>
 
+<!-- PRINT -->
 <div id="printArea">
   <div class="queue-ticket" id="queueTicket"></div>
 </div>
@@ -377,6 +326,7 @@
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
   import { getFirestore, collection, addDoc, onSnapshot, updateDoc, deleteDoc, doc, query, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+  import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
 
   const app = initializeApp({
     apiKey:            "AIzaSyCl0DcZ-q6OIAw2KV58eVN-92Wad9FIVA4",
@@ -387,28 +337,31 @@
     appId:             "1:692276230272:web:f533c0e85762c630f90e65"
   });
   const db  = getFirestore(app);
+  const storage = getStorage(app);
   const col = collection(db, "nurse_records");
 
+  // clock
   function tick() {
     document.getElementById('live-clock').textContent =
       new Date().toLocaleDateString('th-TH',{weekday:'long',year:'numeric',month:'long',day:'numeric',hour:'2-digit',minute:'2-digit',second:'2-digit'});
   }
   tick(); setInterval(tick, 1000);
 
-  const fIdInput = document.getElementById('f-id');
-  const idWarnSpan = document.getElementById('id-warn');
-  
-  fIdInput.addEventListener('input', function() {
-    this.value = this.value.replace(/[^0-9]/g, '');
-    const currentLen = this.value.length;
-    idWarnSpan.textContent = `${currentLen} / 11 หลัก`;
-    if(currentLen === 11) {
-      idWarnSpan.classList.add('complete');
+  // Preview Image
+  document.getElementById('f-image').addEventListener('change', function(e) {
+    const file = e.target.files[0];
+    const preview = document.getElementById('imgPreview');
+    const cont = document.getElementById('imgPreviewCont');
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = function(ex) { preview.src = ex.target.result; cont.style.display = 'block'; }
+      reader.readAsDataURL(file);
     } else {
-      idWarnSpan.classList.remove('complete');
+      cont.style.display = 'none';
     }
   });
 
+  // theme
   let dark = false;
   document.getElementById('themeBtn').addEventListener('click', () => {
     dark = !dark;
@@ -417,6 +370,7 @@
     rebuildCharts();
   });
 
+  // tabs
   document.querySelectorAll('.tab-btn').forEach(btn => {
     btn.addEventListener('click', () => {
       document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
@@ -427,6 +381,7 @@
     });
   });
 
+  // sound
   let soundOn = true;
   const soundBtn = document.getElementById('soundBtn');
   soundBtn.classList.add('on');
@@ -452,6 +407,7 @@
     } catch(e) {}
   }
 
+  // state
   let records = [], prevCount = -1, connected = false, curDetailId = null;
   let cDept = null, cSev = null;
 
@@ -468,10 +424,11 @@
     const newRecs = snap.docs.map(d => ({firestoreId:d.id,...d.data()}))
       .sort((a,b) => (b.ts?.toMillis?.()??0)-(a.ts?.toMillis?.()??0));
     const isNew = prevCount >= 0 && newRecs.length > prevCount;
+    const newIds = isNew ? newRecs.slice(0, newRecs.length - prevCount).map(r=>r.firestoreId) : [];
     if (isNew) beep(newRecs.slice(0, newRecs.length-prevCount).some(r=>r.severity==='เร่งด่วน'));
     prevCount = newRecs.length;
     records = newRecs;
-    renderTable(newRecs.slice(0, newRecs.length - prevCount).map(r=>r.firestoreId));
+    renderTable(newIds);
     updateStats();
     setSync(true);
   }, err => {
@@ -497,7 +454,7 @@
     const tc = dark ? '#d1d5db' : '#374151';
     const gc = dark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.08)';
     const pal = ['#c0392b','#e74c3c','#e67e22','#f1c40f','#2ecc71','#1abc9c','#3498db','#9b59b6','#e91e63','#00bcd4'];
-    
+    // dept bar
     const deptMap = {};
     records.forEach(r => { deptMap[r.dept||'ไม่ระบุ'] = (deptMap[r.dept||'ไม่ระบุ']||0)+1; });
     if (cDept) cDept.destroy();
@@ -507,7 +464,7 @@
       options:{ responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false}},
         scales:{ x:{ticks:{color:tc,font:{family:'Sarabun',size:10},maxRotation:45},grid:{color:gc}}, y:{ticks:{color:tc,stepSize:1},grid:{color:gc},beginAtZero:true} } }
     });
-
+    // sev doughnut
     const sc = {'ไม่เร่งด่วน':0,'ปานกลาง':0,'เร่งด่วน':0};
     records.forEach(r => { if(sc[r.severity]!==undefined) sc[r.severity]++; });
     if (cSev) cSev.destroy();
@@ -529,19 +486,17 @@
     if (!filtered.length) { tbody.innerHTML=`<tr class="empty-row"><td colspan="10">📭 ไม่พบรายการ</td></tr>`; return; }
     const sc={'ไม่เร่งด่วน':'badge-low','ปานกลาง':'badge-mid','เร่งด่วน':'badge-high'};
     const ss={'รอรับบริการ':'badge-wait','เสร็จสิ้น':'badge-done'};
-    
     tbody.innerHTML=filtered.map((r,i)=>`
       <tr class="${newIds.includes(r.firestoreId)?'new-row':''}">
-        <td data-label="#">${i+1}</td>
-        <td data-label="รหัส"><b>${r.sid||'–'}</b></td>
-        <td data-label="ชื่อ–นามสกุล">${r.name||'–'}</td>
-        <td data-label="แผนก">${r.dept||'–'}</td>
-        <td data-label="ชั้น">${r.lvl||'–'}</td>
-        <td data-label="อาการ" style="max-width:120px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis" title="${r.symptom||''}">${r.symptom||'–'}</td>
-        <td data-label="ความเร่งด่วน"><span class="badge ${sc[r.severity]||''}">${r.severity||'–'}</span></td>
-        <td data-label="เวลา">${r.time||'–'}</td>
-        <td data-label="สถานะ"><span class="badge ${ss[r.status]||''}">${r.status||'–'}</span></td>
-        <td>
+        <td style="color:var(--text2);font-size:0.78rem">${i+1}</td>
+        <td><b>${r.sid||'–'}</b></td><td>${r.name||'–'}</td>
+        <td style="font-size:0.8rem">${r.dept||'–'}</td>
+        <td style="font-size:0.8rem">${r.lvl||'–'}</td>
+        <td style="max-width:120px;font-size:0.8rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis" title="${r.symptom||''}">${r.symptom||'–'}</td>
+        <td><span class="badge ${sc[r.severity]||''}">${r.severity||'–'}</span></td>
+        <td style="font-size:0.8rem;white-space:nowrap">${r.time||'–'}</td>
+        <td><span class="badge ${ss[r.status]||''}">${r.status||'–'}</span></td>
+        <td style="white-space:nowrap">
           <button class="action-btn" onclick="showDetail('${r.firestoreId}')">🔍</button>
           <button class="action-btn pbtn" onclick="printQueue('${r.firestoreId}')">🖨️</button>
           ${r.status!=='เสร็จสิ้น'?`<button class="action-btn" onclick="markDone('${r.firestoreId}')">✅</button>`:''}
@@ -560,22 +515,30 @@
     const med=document.getElementById('f-med').value.trim();
     const note=document.getElementById('f-note').value.trim();
     const sev=document.querySelector('input[name="sev"]:checked').value;
-    
+    const imgFile=document.getElementById('f-image').files[0];
+
     if (!sid||!fn||!ln||!dept||!sym) { toast('กรุณากรอกข้อมูลที่จำเป็นให้ครบ','#922b21'); return; }
-    if (sid.length !== 11) { toast('⚠️ กรุณากรอกเลขประจำตัวนักเรียนให้ครบ 11 หลักก่อนนะเพื่อน!','#f59e0b'); return; }
     
     const btn=document.getElementById('submitBtn');
     btn.disabled=true; btn.innerHTML='<div class="spinner"></div> กำลังบันทึก...';
+    
     try {
-      await addDoc(col,{sid,name:fn+' '+ln,dept,lvl,symptom:sym,severity:sev,medicine:med,note,
+      let imgUrl = "";
+      if (imgFile) {
+        const sRef = ref(storage, `nurse_images/${Date.now()}_${imgFile.name}`);
+        const snapshot = await uploadBytes(sRef, imgFile);
+        imgUrl = await getDownloadURL(snapshot.ref);
+      }
+
+      await addDoc(col,{sid,name:fn+' '+ln,dept,lvl,symptom:sym,severity:sev,medicine:med,note,imgUrl,
         time:new Date().toLocaleTimeString('th-TH',{hour:'2-digit',minute:'2-digit'}),
         status:'รอรับบริการ',ts:serverTimestamp()});
+        
       toast('✅ บันทึกสำเร็จ – '+fn+' '+ln,'#0f6e56');
-      ['f-id','f-fname','f-lname','f-symptom','f-med','f-note'].forEach(id=>document.getElementById(id).value='');
+      ['f-id','f-fname','f-lname','f-symptom','f-med','f-note','f-image'].forEach(id=>document.getElementById(id).value='');
       document.getElementById('f-dept').value=''; document.getElementById('f-level').value='';
       document.getElementById('sev-low').checked=true;
-      document.getElementById('id-warn').textContent = '0 / 11 หลัก';
-      document.getElementById('id-warn').classList.remove('complete');
+      document.getElementById('imgPreviewCont').style.display = 'none';
     } catch(e) { toast('❌ '+e.message,'#922b21'); }
     btn.disabled=false; btn.innerHTML='✅ บันทึกการลงทะเบียน';
   };
@@ -584,83 +547,73 @@
     try { await updateDoc(doc(db,'nurse_records',fid),{status:'เสร็จสิ้น'}); toast('✅ อัปเดตสถานะเป็น "เสร็จสิ้น"','#0f6e56'); }
     catch(e) { toast('❌ '+e.message,'#922b21'); }
   };
-  
   window.deleteRec = async fid => {
     if (!confirm('ต้องการลบรายการนี้?')) return;
     try { await deleteDoc(doc(db,'nurse_records',fid)); toast('🗑 ลบรายการเรียบร้อย','#374151'); }
     catch(e) { toast('❌ '+e.message,'#922b21'); }
   };
-  
   window.showDetail = fid => {
     const r=records.find(x=>x.firestoreId===fid); if(!r) return;
     curDetailId=fid;
-    document.getElementById('modalContent').innerHTML = `
-      <div class="detail-row"><b>รหัสนักเรียน:</b><span>${r.sid||'–'}</span></div>
-      <div class="detail-row"><b>ชื่อ-นามสกุล:</b><span>${r.name||'–'}</span></div>
-      <div class="detail-row"><b>แผนก/สาขา:</b><span>${r.dept||'–'}</span></div>
-      <div class="detail-row"><b>ระดับชั้น:</b><span>${r.lvl||'–'}</span></div>
-      <div class="detail-row"><b>อาการ:</b><span>${r.symptom||'–'}</span></div>
-      <div class="detail-row"><b>ความเร่งด่วน:</b><span>${r.severity||'–'}</span></div>
-      <div class="detail-row"><b>ยา/การรักษา:</b><span>${r.medicine||'–'}</span></div>
-      <div class="detail-row"><b>หมายเหตุ:</b><span>${r.note||'–'}</span></div>
-      <div class="detail-row"><b>เวลาลงทะเบียน:</b><span>${r.time||'–'}</span></div>
-      <div class="detail-row"><b>สถานะระบบ:</b><span>${r.status||'–'}</span></div>
-    `;
+    document.getElementById('modalContent').innerHTML=`
+      <div class="detail-row"><b>รหัสนักเรียน</b><span>${r.sid||'–'}</span></div>
+      <div class="detail-row"><b>ชื่อ–นามสกุล</b><span>${r.name||'–'}</span></div>
+      <div class="detail-row"><b>แผนก / ชั้น</b><span>${r.dept||'–'} ${r.lvl||''}</span></div>
+      <div class="detail-row"><b>อาการ</b><span>${r.symptom||'–'}</span></div>
+      <div class="detail-row"><b>ความเร่งด่วน</b><span>${r.severity||'–'}</span></div>
+      <div class="detail-row"><b>ยาที่ได้รับ</b><span>${r.medicine||'–'}</span></div>
+      <div class="detail-row"><b>หมายเหตุ</b><span>${r.note||'–'}</span></div>
+      <div class="detail-row"><b>เวลาลงทะเบียน</b><span>${r.time||'–'}</span></div>
+      <div class="detail-row"><b>สถานะ</b><span>${r.status||'–'}</span></div>
+      ${r.imgUrl ? `<img src="${r.imgUrl}" class="modal-img" alt="Attached photo" onclick="window.open('${r.imgUrl}')" style="cursor:zoom-in;">` : ''}`;
     document.getElementById('detailModal').classList.add('open');
   };
-
-  window.closeModalDirect = () => {
-    document.getElementById('detailModal').classList.remove('open');
-  };
-
-  window.closeModal = (e) => {
-    if(e.target.id === 'detailModal') {
-      document.getElementById('detailModal').classList.remove('open');
-    }
-  };
+  window.closeModal = e => { if(e.target.id==='detailModal') closeModalDirect(); };
+  window.closeModalDirect = () => document.getElementById('detailModal').classList.remove('open');
 
   window.printQueue = fid => {
     const r=records.find(x=>x.firestoreId===fid); if(!r) return;
-    const ticket = document.getElementById('queueTicket');
-    ticket.innerHTML = `
-      <div class="q-school">วิทยาลัยเทคนิคหาดใหญ่<br>บัตรคิวรับบริการห้องพยาบาล</div>
-      <div class="q-label">หมายเลขคิวของคุณ</div>
-      <div class="q-num">#${r.sid ? r.sid.substring(r.sid.length - 3) : '000'}</div>
+    const idx=records.findIndex(x=>x.firestoreId===fid);
+    const qNum=String(idx+1).padStart(3,'0');
+    const sc=r.severity==='เร่งด่วน'?'#c0392b':r.severity==='ปานกลาง'?'#e67e22':'#27ae60';
+    document.getElementById('queueTicket').innerHTML=`
+      <div class="q-school">ห้องพยาบาล<br>วิทยาลัยเทคนิคหาดใหญ่</div>
+      <div class="q-num">${qNum}</div>
+      <div class="q-label">หมายเลขคิว</div>
       <div class="q-name">${r.name||'–'}</div>
       <div class="q-dept">${r.dept||'–'} ${r.lvl||''}</div>
-      <div class="q-sev">ความรุนแรง: ${r.severity||'–'}</div>
-      <div class="q-time">เวลาพิมพ์: ${r.time||'–'} น.</div>
-    `;
+      <div class="q-sev" style="color:${sc}">● ${r.severity||'–'}</div>
+      <div class="q-time">ลงทะเบียน ${r.time||'–'} น.</div>`;
+    document.getElementById('printArea').style.display='flex';
     window.print();
+    document.getElementById('printArea').style.display='none';
   };
 
   document.getElementById('printModalBtn').addEventListener('click', () => {
-    if(curDetailId) printQueue(curDetailId);
+    if(curDetailId) { closeModalDirect(); printQueue(curDetailId); }
   });
+  window.exportCSV = () => {
+    if(!records.length) { toast('ไม่มีข้อมูลให้ Export','#374151'); return; }
+    const h=['#','รหัส','ชื่อ-นามสกุล','แผนก','ชั้น','อาการ','ความเร่งด่วน','ยา','หมายเหตุ','เวลา','สถานะ'];
+    const rows=records.map((r,i)=>[i+1,r.sid,r.name,r.dept,r.lvl,r.symptom,r.severity,r.medicine,r.note,r.time,r.status]
+      .map(v=>`"${(v||'').replace(/"/g,'""')}"`).join(','));
+    const a=document.createElement('a');
+    a.href='data:text/csv;charset=utf-8,\uFEFF'+encodeURIComponent([h.join(','),...rows].join('\n'));
+    a.download=`nurse_${new Date().toISOString().slice(0,10)}.csv`; a.click();
+    toast('📥 Export CSV สำเร็จ','#0f6e56');
+  };
 
-  document.getElementById('exportBtn').addEventListener('click', () => {
-    if(records.length === 0) { toast('📭 ไม่มีข้อมูลสำหรับการส่งออก', '#f59e0b'); return; }
-    let csv = "\uFEFF#ID,Student ID,Name,Department,Level,Symptom,Severity,Time,Status\n";
-    records.forEach((r, i) => {
-      csv += `${i+1},"${r.sid||''}","${r.name||''}","${r.dept||''}","${r.lvl||''}","${r.symptom||''}","${r.severity||''}","${r.time||''}","${r.status||''}"\n`;
-    });
-    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-    const link = document.createElement("a");
-    link.href = URL.createObjectURL(blob);
-    link.setAttribute("download", `Nurse_Records_${new Date().toISOString().slice(0,10)}.csv`);
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-  });
+  document.getElementById('submitBtn').addEventListener('click', submitForm);
+  document.getElementById('searchBox').addEventListener('input', () => renderTable());
+  document.getElementById('filterDept').addEventListener('change', () => renderTable());
+  document.getElementById('filterStatus').addEventListener('change', () => renderTable());
+  document.querySelector('.btn-export').addEventListener('click', exportCSV);
 
-  function toast(msg, bg) {
-    const t = document.getElementById('toast');
-    t.textContent = msg;
-    t.style.background = bg || 'rgba(0,0,0,0.8)';
-    t.classList.add('show');
-    setTimeout(() => t.classList.remove('show'), 3000);
+  function toast(msg, bg='#1a1a2e') {
+    const t=document.getElementById('toast');
+    t.textContent=msg; t.style.background=bg; t.classList.add('show');
+    clearTimeout(window._tt); window._tt=setTimeout(()=>t.classList.remove('show'),3200);
   }
 </script>
-
 </body>
 </html>
