@@ -1,187 +1,658 @@
 <!DOCTYPE html>
-<html lang="th">
+<html lang="th" data-theme="light">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NOXAME - Data Verification Portal</title>
-    <style>
-        /* ==========================================================================
-           1. ส่วนของ CSS (แต่งหน้าตาเว็บให้เหมือนในรูปภาพเป๊ะๆ)
-           ========================================================================== */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>ห้องพยาบาล – วิทยาลัยเทคนิคหาดใหญ่</title>
+  <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&family=Prompt:wght@400;600;700;800&display=swap" rel="stylesheet"/>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <style>
+    :root {
+      --red:      #c0392b;
+      --red-d:    #922b21;
+      --red-l:    #fdecea;
+      --accent:   #e74c3c;
+      --green:    #1abc9c;
+      --blue:     #3b82f6;
+      --yellow:   #f59e0b;
+      --bg:       #f4f1ee;
+      --surface:  #ffffff;
+      --surface2: #fafafa;
+      --border:   #e5e7eb;
+      --text:     #1a1a2e;
+      --text2:    #6b7280;
+      --shadow:   0 4px 24px rgba(192,57,43,0.10);
+      --shadow2:  0 2px 8px rgba(0,0,0,0.08);
+      --radius:   14px;
+      --tr: 0.25s ease;
+    }
+    [data-theme="dark"] {
+      --bg:       #0f0f18;
+      --surface:  #1a1a2e;
+      --surface2: #16213e;
+      --border:   #2d2d4a;
+      --text:     #f0f0f8;
+      --text2:    #9ca3af;
+      --shadow:   0 4px 24px rgba(0,0,0,0.4);
+      --shadow2:  0 2px 8px rgba(0,0,0,0.3);
+      --red-l:    #2d1a1a;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family:'Sarabun',sans-serif; background:var(--bg); min-height:100vh; color:var(--text); transition:background var(--tr),color var(--tr); }
 
-        /* พื้นหลังไล่เฉดสีมืดสไตล์ดาร์กโหมด */
-        body {
-            background: radial-gradient(circle at 50% 50%, #111723 0%, #070a0f 100%);
-            height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            overflow: hidden;
-        }
+    header {
+      background:linear-gradient(135deg,var(--red-d) 0%,var(--red) 55%,#e74c3c 100%);
+      color:#fff; padding:14px 28px;
+      display:flex; align-items:center; gap:16px;
+      box-shadow:0 3px 20px rgba(0,0,0,0.3);
+      position:sticky; top:0; z-index:100;
+    }
+    .logo-circle { width:52px;height:52px;background:rgba(255,255,255,0.18);border:2px solid rgba(255,255,255,0.4);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0; }
+    header h1 { font-family:'Prompt',sans-serif;font-size:1.1rem;font-weight:700;line-height:1.3; }
+    header p  { font-size:0.78rem;opacity:0.85;margin-top:1px; }
+    #live-clock { font-size:0.7rem;opacity:0.75;margin-top:2px;font-family:'Prompt',sans-serif; }
+    .header-right { margin-left:auto;display:flex;align-items:center;gap:10px;flex-shrink:0; }
+    .header-badge { background:rgba(255,255,255,0.18);border:1px solid rgba(255,255,255,0.35);border-radius:20px;padding:4px 12px;font-size:0.75rem;white-space:nowrap; }
+    .sync-pill { display:flex;align-items:center;gap:5px;font-size:0.72rem;background:rgba(0,0,0,0.2);border-radius:20px;padding:4px 10px; }
+    .dot { width:7px;height:7px;border-radius:50%;background:#aaa;flex-shrink:0; }
+    .dot.online  { background:#2ecc71;animation:pulse 2s infinite; }
+    .dot.offline { background:#e74c3c; }
+    @keyframes pulse { 0%,100%{opacity:1}50%{opacity:0.3} }
+    .btn-theme { background:rgba(255,255,255,0.18);border:1px solid rgba(255,255,255,0.3);border-radius:8px;color:#fff;padding:6px 10px;cursor:pointer;font-size:1rem;transition:background 0.2s; }
+    .btn-theme:hover { background:rgba(255,255,255,0.28); }
 
-        /* กล่องโมเดลการ์ด NOXAME ตัวกลางหน้าจอ */
-        .card {
-            background: #17191e;
-            border: 1px solid rgba(255, 255, 255, 0.03);
-            padding: 45px 40px;
-            border-radius: 24px;
-            width: 100%;
-            max-width: 440px;
-            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
-            display: flex;
-            flex-direction: column;
-            gap: 25px;
-        }
+    .tab-nav { display:flex;gap:0;background:var(--surface);border-bottom:2px solid var(--border);padding:0 28px;overflow-x:auto;transition:background var(--tr); }
+    .tab-btn { padding:12px 20px;border:none;background:none;font-family:'Sarabun',sans-serif;font-size:0.88rem;font-weight:600;color:var(--text2);cursor:pointer;border-bottom:3px solid transparent;margin-bottom:-2px;white-space:nowrap;transition:color 0.2s,border-color 0.2s;display:flex;align-items:center;gap:6px; }
+    .tab-btn.active { color:var(--red);border-bottom-color:var(--red); }
+    .tab-btn:hover:not(.active) { color:var(--text); }
 
-        /* ส่วนหัวข้อ Brand โลโก้ */
-        .brand-zone {
-            text-align: center;
-            margin-bottom: 5px;
-        }
+    .tab-content { display:none;padding:24px 28px 60px;max-width:1300px;margin:0 auto; }
+    .tab-content.active { display:block; }
 
-        .brand-logo {
-            font-size: 36px;
-            font-weight: 800;
-            letter-spacing: 4px;
-            background: linear-gradient(45deg, #00d2ff, #a855f7);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            text-transform: uppercase;
-        }
+    .card { background:var(--surface);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;transition:background var(--tr); }
+    .card-header { background:linear-gradient(135deg,var(--red) 0%,var(--red-d) 100%);color:#fff;padding:14px 20px;font-family:'Prompt',sans-serif;font-size:0.92rem;font-weight:600;display:flex;align-items:center;gap:8px; }
+    .card-body { padding:20px; }
 
-        .brand-sub {
-            font-size: 11px;
-            color: #475569;
-            letter-spacing: 2px;
-            margin-top: 6px;
-            text-transform: uppercase;
-            font-weight: 600;
-        }
+    .grid2 { display:grid;grid-template-columns:1fr 1fr;gap:12px; }
+    .form-group { margin-bottom:14px; position: relative; }
+    label.lbl { display:block;font-size:0.82rem;font-weight:600;color:var(--text2);margin-bottom:4px; }
+    label.lbl .req { color:var(--red); }
+    input, select, textarea { width:100%;padding:9px 12px;border:1.5px solid var(--border);border-radius:9px;font-family:'Sarabun',sans-serif;font-size:0.88rem;color:var(--text);background:var(--surface2);transition:border-color 0.2s,box-shadow 0.2s,background var(--tr);outline:none; }
+    input:focus, select:focus, textarea:focus { border-color:var(--red);box-shadow:0 0 0 3px rgba(192,57,43,0.12);background:var(--surface); }
+    textarea { resize:vertical;min-height:76px; }
 
-        /* ส่วนกล่องข้อความ Area Input */
-        .input-group {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            position: relative;
-        }
+    /* ปรับแต่ง UI ตัวช่วยนับหลักตัวเลข */
+    .id-counter { font-size: 0.75rem; color: var(--text2); font-weight: bold; margin-top: 4px; display: block; text-align: right; }
+    .id-counter.complete { color: var(--green); }
 
-        .input-label {
-            color: #00d2ff;
-            font-size: 14px;
-            font-weight: 600;
-            letter-spacing: 0.5px;
-        }
+    .severity-btn { display:none; }
+    .severity-group { display:flex;gap:8px;flex-wrap:wrap;margin-top:4px; }
+    .severity-label { padding:6px 14px;border-radius:20px;border:1.5px solid var(--border);font-size:0.8rem;cursor:pointer;transition:all 0.2s;font-weight:500;color:var(--text); }
+    #sev-low:checked  ~ .severity-group .lbl-low  { background:#d1fae5;border-color:#10b981;color:#065f46; }
+    #sev-mid:checked  ~ .severity-group .lbl-mid  { background:#fef3c7;border-color:#f59e0b;color:#78350f; }
+    #sev-high:checked ~ .severity-group .lbl-high { background:#fee2e2;border-color:#ef4444;color:#991b1b; }
 
-        /* ช่องสำหรับกรอกตัวเลข */
-        .input-box {
-            background: #0f1115;
-            border: 1px solid #1e293b;
-            border-radius: 12px;
-            padding: 16px;
-            color: #ffffff;
-            font-size: 22px;
-            letter-spacing: 3px;
-            outline: none;
-            transition: all 0.25s ease;
-            font-weight: 500;
-        }
+    .btn-submit { width:100%;padding:13px;background:linear-gradient(135deg,var(--red) 0%,var(--red-d) 100%);color:#fff;border:none;border-radius:10px;font-family:'Prompt',sans-serif;font-size:1rem;font-weight:600;cursor:pointer;transition:opacity 0.2s,transform 0.15s;margin-top:4px;display:flex;align-items:center;justify-content:center;gap:8px;box-shadow:0 4px 14px rgba(192,57,43,0.3); }
+    .btn-submit:hover { opacity:0.9;transform:translateY(-1px); }
+    .btn-submit:disabled { opacity:0.55;cursor:not-allowed;transform:none; }
 
-        /* เอฟเฟกต์ตอนจิ้มกล่องพิม */
-        .input-box:focus {
-            border-color: #00d2ff;
-            box-shadow: 0 0 15px rgba(0, 210, 255, 0.15);
-        }
+    .stats-row { display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:20px; }
+    .stat-box { background:var(--surface);border-radius:var(--radius);padding:16px 18px;box-shadow:var(--shadow2);display:flex;align-items:center;gap:14px;border-left:4px solid transparent;transition:transform 0.2s,box-shadow 0.2s,background var(--tr); }
+    .stat-box:hover { transform:translateY(-2px);box-shadow:var(--shadow); }
+    .stat-box.red   { border-color:var(--red); }
+    .stat-box.blue  { border-color:var(--blue); }
+    .stat-box.green { border-color:var(--green); }
+    .stat-box.yel   { border-color:var(--yellow); }
+    .stat-icon { font-size:1.9rem;line-height:1; }
+    .stat-val { font-family:'Prompt',sans-serif;font-size:1.7rem;font-weight:800;line-height:1; }
+    .stat-lbl { font-size:0.72rem;color:var(--text2);margin-top:3px; }
+    .stat-box.red   .stat-val { color:var(--red); }
+    .stat-box.blue  .stat-val { color:var(--blue); }
+    .stat-box.green .stat-val { color:var(--green); }
+    .stat-box.yel   .stat-val { color:var(--yellow); }
 
-        /* ตัวนับจำนวนตัวอักษรมุมขวาล่างช่องพิม */
-        .counter-zone {
-            text-align: right;
-            font-size: 12px;
-            color: #00d2ff;
-            margin-top: -2px;
-            font-weight: bold;
-        }
+    .table-toolbar { display:flex;align-items:center;gap:8px;padding:12px 16px;border-bottom:1px solid var(--border);flex-wrap:wrap; }
+    .search-box { flex:1;min-width:160px;padding:8px 12px;border:1.5px solid var(--border);border-radius:8px;font-family:'Sarabun',sans-serif;font-size:0.86rem;color:var(--text);background:var(--surface2);outline:none; }
+    .search-box:focus { border-color:var(--red); }
+    .filter-select { padding:8px 11px;border:1.5px solid var(--border);border-radius:8px;font-family:'Sarabun',sans-serif;font-size:0.86rem;color:var(--text);background:var(--surface2);cursor:pointer;outline:none; }
+    .btn-export { padding:8px 14px;background:var(--green);color:#fff;border:none;border-radius:8px;font-family:'Sarabun',sans-serif;font-size:0.82rem;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:5px;white-space:nowrap;transition:opacity 0.2s; }
+    .btn-export:hover { opacity:0.85; }
+    .btn-sound { padding:8px 12px;background:var(--surface2);border:1.5px solid var(--border);border-radius:8px;cursor:pointer;font-size:0.82rem;font-weight:600;transition:all 0.2s;color:var(--text);font-family:'Sarabun',sans-serif; }
+    .btn-sound.on { background:#fef3c7;border-color:#f59e0b;color:#78350f; }
 
-        /* ปุ่ม VERIFY DATA เรืองแสงสีฟ้า */
-        .verify-btn {
-            background: linear-gradient(90deg, #00d2ff, #00a8ff);
-            border: none;
-            padding: 16px;
-            border-radius: 12px;
-            color: #000000;
-            font-size: 16px;
-            font-weight: 700;
-            letter-spacing: 1.5px;
-            cursor: pointer;
-            transition: all 0.25s ease;
-            box-shadow: 0 4px 20px rgba(0, 210, 255, 0.35);
-            margin-top: 5px;
-            text-transform: uppercase;
-        }
+    table { width:100%;border-collapse:collapse; }
+    thead { background:var(--red-l); }
+    thead th { padding:10px 13px;text-align:left;font-size:0.75rem;font-weight:700;color:var(--red-d);text-transform:uppercase;letter-spacing:0.05em;border-bottom:2px solid var(--border);white-space:nowrap; }
+    [data-theme="dark"] thead { background:rgba(192,57,43,0.15); }
+    [data-theme="dark"] thead th { color:#f5b7b1; }
+    tbody tr { border-bottom:1px solid var(--border);transition:background 0.15s; }
+    tbody tr:hover { background:var(--red-l); }
+    tbody td { padding:10px 13px;font-size:0.86rem;vertical-align:middle;color:var(--text); }
 
-        .verify-btn:hover {
-            opacity: 0.95;
-            transform: translateY(-1px);
-            box-shadow: 0 6px 25px rgba(0, 210, 255, 0.55);
-        }
+    .badge { display:inline-block;padding:3px 10px;border-radius:12px;font-size:0.7rem;font-weight:700; }
+    .badge-low  { background:#d1fae5;color:#065f46; }
+    .badge-mid  { background:#fef3c7;color:#78350f; }
+    .badge-high { background:#fee2e2;color:#991b1b; }
+    .badge-done { background:#dbeafe;color:#1d4ed8; }
+    .badge-wait { background:#f3f4f6;color:#4b5563; }
+    [data-theme="dark"] .badge-wait { background:#374151;color:#d1d5db; }
 
-        .verify-btn:active {
-            transform: translateY(1px);
-        }
-    </style>
+    .action-btn { padding:4px 9px;border-radius:6px;border:1.5px solid var(--border);background:var(--surface);font-size:0.78rem;cursor:pointer;font-family:'Sarabun',sans-serif;transition:all 0.15s;margin-right:3px;color:var(--text); }
+    .action-btn:hover { border-color:var(--red);color:var(--red); }
+    .action-btn.del:hover { border-color:#ef4444;color:#ef4444; }
+    .action-btn.pbtn:hover { border-color:var(--blue);color:var(--blue); }
+
+    .empty-row td { text-align:center;padding:40px;color:var(--text2);font-size:0.9rem; }
+    .new-row { animation:hl 2.5s ease; }
+    @keyframes hl { 0%{background:rgba(192,57,43,0.18)}100%{background:transparent} }
+
+    .dash-grid { display:grid;grid-template-columns:1fr 1fr;gap:20px; }
+    .chart-card { background:var(--surface);border-radius:var(--radius);box-shadow:var(--shadow2);padding:20px;transition:background var(--tr); }
+    .chart-title { font-family:'Prompt',sans-serif;font-size:0.9rem;font-weight:600;color:var(--text);margin-bottom:14px; }
+    .chart-wrap { position:relative;height:220px; }
+
+    .modal-overlay { display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:300;align-items:center;justify-content:center;padding:16px; }
+    .modal-overlay.open { display:flex; }
+    .modal { background:var(--surface);border-radius:18px;padding:26px 30px;max-width:440px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,0.3);animation:pop .25s ease;transition:background var(--tr); }
+    @keyframes pop { from{transform:scale(0.9);opacity:0}to{transform:scale(1);opacity:1} }
+    .modal h3 { font-family:'Prompt',sans-serif;font-size:1rem;color:var(--red-d);margin-bottom:14px; }
+    [data-theme="dark"] .modal h3 { color:#f5b7b1; }
+    .detail-row { display:flex;gap:8px;margin-bottom:8px;font-size:0.86rem;color:var(--text); }
+    .detail-row b { min-width:110px;color:var(--text2);font-weight:600; }
+    .modal-actions { margin-top:18px;display:flex;gap:8px;justify-content:flex-end; }
+    .btn-close-modal { padding:8px 16px;background:var(--surface2);border:1.5px solid var(--border);border-radius:8px;cursor:pointer;font-family:'Sarabun',sans-serif;font-size:0.86rem;color:var(--text); }
+    .btn-print-modal { padding:8px 16px;background:var(--blue);border:none;border-radius:8px;cursor:pointer;font-family:'Sarabun',sans-serif;font-size:0.86rem;color:#fff;font-weight:600; }
+
+    @media print {
+      body * { visibility:hidden; }
+      #printArea, #printArea * { visibility:visible; }
+      #printArea { position:fixed;inset:0;display:flex;align-items:center;justify-content:center; }
+    }
+    #printArea { display:none; }
+    .queue-ticket { width:280px;border:3px solid #c0392b;border-radius:14px;padding:22px 18px;text-align:center;font-family:'Prompt',sans-serif;background:#fff;color:#1a1a2e; }
+    .q-school { font-size:0.68rem;color:#666;margin-bottom:8px;line-height:1.4; }
+    .q-num { font-size:4.5rem;font-weight:800;color:#c0392b;line-height:1; }
+    .q-label { font-size:0.75rem;color:#888;margin-bottom:10px; }
+    .q-name { font-size:1rem;font-weight:700; }
+    .q-dept { font-size:0.8rem;color:#555; }
+    .q-sev { font-size:0.78rem;margin-top:8px;font-weight:700; }
+    .q-time { font-size:0.7rem;color:#888;margin-top:10px;border-top:1px dashed #ccc;padding-top:8px; }
+
+    .spinner { display:inline-block;width:16px;height:16px;border:2px solid rgba(255,255,255,0.35);border-top-color:#fff;border-radius:50%;animation:spin 0.7s linear infinite; }
+    @keyframes spin { to{transform:rotate(360deg)} }
+
+    #toast { position:fixed;bottom:24px;right:24px;color:#fff;padding:12px 18px;border-radius:10px;font-size:0.86rem;box-shadow:0 8px 24px rgba(0,0,0,0.25);transform:translateY(80px);opacity:0;transition:all 0.35s ease;z-index:999;max-width:320px; }
+    #toast.show { transform:translateY(0);opacity:1; }
+
+    /* ==========================================================================
+       อัปเกรดระบบจัดหน้า Mobile Responsive ปรับแต่งสัดส่วนเพื่อความน่าเชื่อถือสูง
+       ========================================================================== */
+    @media (max-width:1024px) { 
+      .stats-row { grid-template-columns:repeat(2,1fr); gap:10px; } 
+      .dash-grid { grid-template-columns:1fr; } 
+    }
+    
+    @media (max-width:768px) { 
+      .tab-content { padding:16px 12px 48px; } 
+      header { padding:12px 16px; gap:12px; flex-wrap: wrap; } 
+      header h1 { font-size:1rem; } 
+      .logo-circle { width:44px; height:44px; font-size:20px; }
+      .tab-nav { padding:0 12px; } 
+      .tab-btn { padding:10px 14px; font-size:0.82rem; }
+      .header-right { width: 100%; justify-content: space-between; margin-top: 5px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 8px; }
+      .header-badge { display: inline-block; font-size: 0.7rem; } 
+    }
+    
+    @media (max-width:540px) { 
+      .grid2 { grid-template-columns:1fr; gap: 0; } 
+      .stats-row { grid-template-columns:1fr 1fr; gap: 8px; } 
+      .stat-box { padding: 12px; gap: 8px; }
+      .stat-icon { font-size: 1.5rem; }
+      .stat-val { font-size: 1.4rem; }
+      .stat-lbl { font-size: 0.65rem; }
+      .card-body { padding: 15px; }
+      .table-toolbar { gap: 6px; padding: 10px; }
+      .search-box { width: 100%; min-width: 100%; }
+      .filter-select { flex: 1; font-size: 0.8rem; padding: 6px; }
+      .btn-export, .btn-sound { padding: 8px; font-size: 0.78rem; }
+      table thead { display: none; } /* ซ่อนหัวตารางบนจอเล็กเว้นพื้นที่ */
+      table, table tbody, table tr, table td { display: block; width: 100%; }
+      table tr { margin-bottom: 12px; border: 1px solid var(--border); border-radius: 8px; padding: 8px; background: var(--surface); }
+      table td { text-align: right; padding: 6px 8px; font-size: 0.82rem; border-bottom: 1px dashed var(--border); }
+      table td::before { content: attr(data-label); float: left; font-weight: bold; color: var(--text2); font-size: 0.78rem; }
+      table td:last-child { border-bottom: none; text-align: center; }
+      table td:last-child::before { display: none; }
+      .action-btn { margin: 2px; padding: 6px 12px; font-size: 0.85rem; }
+    }
+  </style>
 </head>
 <body>
 
-    <div class="card">
-        <div class="brand-zone">
-            <div class="brand-logo">NOXAME</div>
-            <div class="brand-sub">Data Verification Portal</div>
-        </div>
-
-        <div class="input-group">
-            <label class="input-label" for="studentId">เลขประจำตัวนักเรียน</label>
-            <input type="text" id="studentId" class="input-box" maxlength="11" placeholder="•••••••••••" autocomplete="off">
-            <div class="counter-zone" id="charCount">0/11</div>
-        </div>
-
-        <button id="verifyBtn" class="verify-btn">VERIFY DATA</button>
+<header>
+  <div class="logo-circle">🏥</div>
+  <div>
+    <h1>ห้องพยาบาล – วิทยาลัยเทคนิคหาดใหญ่</h1>
+    <p>ระบบลงทะเบียนนักเรียนเข้ารับบริการ</p>
+    <div id="live-clock"></div>
+  </div>
+  <div class="header-right">
+    <div class="header-badge">📋 ปีการศึกษา 2567</div>
+    <div class="sync-pill">
+      <div class="dot" id="syncDot"></div>
+      <span id="syncText">กำลังเชื่อมต่อ...</span>
     </div>
+    <button class="btn-theme" id="themeBtn">🌙</button>
+  </div>
+</header>
 
-    <script>
-        const studentIdInput = document.getElementById('studentId');
-        const charCountText = document.getElementById('charCount');
-        const verifyBtn = document.getElementById('verifyBtn');
+<div class="tab-nav">
+  <button class="tab-btn active" data-tab="tab-register">📝 ลงทะเบียน</button>
+  <button class="tab-btn" data-tab="tab-list">📋 รายชื่อ</button>
+  <button class="tab-btn" data-tab="tab-dash">📊 Dashboard</button>
+</div>
 
-        // ระบบที่ 1: ดักจับตอนพิมพ์ (พิมพ์ได้เฉพาะตัวเลข 0-9 เท่านั้น และอัปเดตตัวนับตัวอักษรแบบ Real-time)
-        studentIdInput.addEventListener('input', function() {
-            // ล้างค่าดักเอาตัวอักษรภาษาไทย/อังกฤษ หรืออักขระพิเศษออกให้เหลือแค่ตัวเลข
-            this.value = this.value.replace(/[^0-9]/g, '');
-            
-            // อัปเดตตัวเลขบอกสถานะ เช่น 5/11, 11/11
-            let currentLength = this.value.length;
-            charCountText.innerText = `${currentLength}/11`;
-        });
+<div class="tab-content active" id="tab-register">
+  <div class="stats-row">
+    <div class="stat-box red"><div class="stat-icon">👤</div><div><div class="stat-val" id="s-total">–</div><div class="stat-lbl">ทั้งหมดวันนี้</div></div></div>
+    <div class="stat-box blue"><div class="stat-icon">⏳</div><div><div class="stat-val" id="s-wait">–</div><div class="stat-lbl">รอรับบริการ</div></div></div>
+    <div class="stat-box green"><div class="stat-icon">✅</div><div><div class="stat-val" id="s-done">–</div><div class="stat-lbl">เสร็จสิ้น</div></div></div>
+    <div class="stat-box yel"><div class="stat-icon">🔴</div><div><div class="stat-val" id="s-urg">–</div><div class="stat-lbl">เร่งด่วน</div></div></div>
+  </div>
+  <div class="card">
+    <div class="card-header"><span>📝</span> กรอกข้อมูลการลงทะเบียน</div>
+    <div class="card-body">
+      <div class="form-group">
+        <label class="lbl">เลขประจำตัวนักเรียน (11 หลัก) <span class="req">*</span></label>
+        <input type="text" id="f-id" placeholder="เช่น 66309010001" maxlength="11" inputmode="numeric"/>
+        <span class="id-counter" id="id-warn">0 / 11 หลัก</span>
+      </div>
+      <div class="grid2">
+        <div class="form-group"><label class="lbl">ชื่อ <span class="req">*</span></label><input type="text" id="f-fname" placeholder="ชื่อ"/></div>
+        <div class="form-group"><label class="lbl">นามสกุล <span class="req">*</span></label><input type="text" id="f-lname" placeholder="นามสกุล"/></div>
+      </div>
+      <div class="grid2">
+        <div class="form-group">
+          <label class="lbl">แผนก / สาขา <span class="req">*</span></label>
+          <select id="f-dept"><option value="">-- เลือกแผนก --</option><option>ช่างยนต์</option><option>ช่างไฟฟ้า</option><option>ช่างอิเล็กทรอนิกส์</option><option>ช่างกลโรงงาน</option><option>ช่างเชื่อมโลหะ</option><option>เทคโนโลยีสารสนเทศ</option><option>การบัญชี</option><option>การตลาด</option><option>คอมพิวเตอร์ธุรกิจ</option><option>ช่างก่อสร้าง</option></select>
+        </div>
+        <div class="form-group">
+          <label class="lbl">ระดับชั้น</label>
+          <select id="f-level"><option value="">-- เลือก --</option><option>ปวช.1</option><option>ปวช.2</option><option>ปวช.3</option><option>ปวส.1</option><option>ปวส.2</option></select>
+        </div>
+      </div>
+      <div class="form-group"><label class="lbl">อาการ / เหตุผลที่มา <span class="req">*</span></label><textarea id="f-symptom" placeholder="ระบุอาการเบื้องต้น เช่น ปวดหัว มีไข้ ปวดท้อง บาดเจ็บ..."></textarea></div>
+      <div class="form-group">
+        <label class="lbl">ระดับความเร่งด่วน</label>
+        <input type="radio" name="sev" id="sev-low"  class="severity-btn" value="ไม่เร่งด่วน" checked/>
+        <input type="radio" name="sev" id="sev-mid"  class="severity-btn" value="ปานกลาง"/>
+        <input type="radio" name="sev" id="sev-high" class="severity-btn" value="เร่งด่วน"/>
+        <div class="severity-group">
+          <label for="sev-low"  class="severity-label lbl-low">🟢 不เร่งด่วน</label>
+          <label for="sev-mid"  class="severity-label lbl-mid">🟡 ปานกลาง</label>
+          <label for="sev-high" class="severity-label lbl-high">🔴 เร่งด่วน</label>
+        </div>
+      </div>
+      <div class="form-group"><label class="lbl">ยาที่ได้รับ / การรักษาเบื้องต้น</label><input type="text" id="f-med" placeholder="เช่น พาราเซตามอล 500 mg, ยาแก้ไอ..."/></div>
+      <div class="form-group"><label class="lbl">หมายเหตุ</label><input type="text" id="f-note" placeholder="ข้อมูลเพิ่มเติม (ถ้ามี)"/></div>
+      <button class="btn-submit" id="submitBtn">✅ บันทึกการลงทะเบียน</button>
+    </div>
+  </div>
+</div>
 
-        // ระบบที่ 2: ดักจับการกดปุ่ม VERIFY DATAเพื่อข้ามไปหน้าต่อไป
-        verifyBtn.addEventListener('click', function() {
-            let idValue = studentIdInput.value.trim();
+<div class="tab-content" id="tab-list">
+  <div class="card">
+    <div class="card-header"><span>📋</span> รายชื่อนักเรียนเข้ารับบริการ<span style="margin-left:auto;font-size:0.72rem;opacity:0.85;">🔴 Live Real-time</span></div>
+    <div class="table-toolbar">
+      <input class="search-box" id="searchBox" placeholder="🔍 ค้นหาชื่อ / รหัส..."/>
+      <select class="filter-select" id="filterDept"><option value="">ทุกแผนก</option><option>ช่างยนต์</option><option>ช่างไฟฟ้า</option><option>ช่างอิเล็กทรอนิกส์</option><option>ช่างกลโรงงาน</option><option>ช่างเชื่อมโลหะ</option><option>เทคโนโลยีสารสนเทศ</option><option>การบัญชี</option><option>การตลาด</option><option>คอมพิวเตอร์ธุรกิจ</option><option>ช่างก่อสร้าง</option></select>
+      <select class="filter-select" id="filterStatus"><option value="">ทุกสถานะ</option><option value="รอรับบริการ">รอรับบริการ</option><option value="เสร็จสิ้น">เสร็จสิ้น</option></select>
+      <button class="btn-sound" id="soundBtn">🔔 เสียง</button>
+      <button class="btn-export" id="exportBtn">📥 CSV</button>
+    </div>
+    <div style="overflow-x:auto;">
+      <table>
+        <thead><tr><th>#</th><th>รหัส</th><th>ชื่อ–นามสกุล</th><th>แผนก</th><th>ชั้น</th><th>อาการ</th><th>ความเร่งด่วน</th><th>เวลา</th><th>สถานะ</th><th>จัดการ</th></tr></thead>
+        <tbody id="tableBody"><tr class="empty-row"><td colspan="10">⏳ กำลังเชื่อมต่อ Firebase...</td></tr></tbody>
+      </table>
+    </div>
+  </div>
+</div>
 
-            // เช็คเงื่อนไขว่าถ้ากรอกเลขอะไรก็ได้จนครบ 11 หลักเป๊ะๆ ให้ผ่านฉลุย
-            if (idValue.length === 11) {
-                // ตัวอย่าง: ถ้าหน้าถัดไปของมึงคือหน้าลงทะเบียนพยาบาล ให้เปลี่ยนตรงนี้เป็น 'nurse-registration.html' ได้เลยครับ
-                window.location.href = 'nurse-registration.html'; 
-            } else {
-                // ถ้ากรอกไม่ครบ 11 ตัว จะมี Alert เตือนขึ้นมา
-                alert('กรุณากรอกเลขประจำตัวให้ครบ 11 หลักก่อนนะเพื่อน!');
-            }
-        });
-    </script>
+<div class="tab-content" id="tab-dash">
+  <div class="stats-row" style="margin-bottom:24px;">
+    <div class="stat-box red"><div class="stat-icon">👤</div><div><div class="stat-val" id="d-total">–</div><div class="stat-lbl">ทั้งหมดวันนี้</div></div></div>
+    <div class="stat-box blue"><div class="stat-icon">⏳</div><div><div class="stat-val" id="d-wait">–</div><div class="stat-lbl">รอรับบริการ</div></div></div>
+    <div class="stat-box green"><div class="stat-icon">✅</div><div><div class="stat-val" id="d-done">–</div><div class="stat-lbl">เสร็จสิ้น</div></div></div>
+    <div class="stat-box yel"><div class="stat-icon">🔴</div><div><div class="stat-val" id="d-urg">–</div><div class="stat-lbl">เร่งด่วน</div></div></div>
+  </div>
+  <div class="dash-grid">
+    <div class="chart-card"><div class="chart-title">📊 แผนกที่เข้ารับบริการ</div><div class="chart-wrap"><canvas id="chartDept"></canvas></div></div>
+    <div class="chart-card"><div class="chart-title">🚨 ระดับความเร่งด่วน</div><div class="chart-wrap"><canvas id="chartSev"></canvas></div></div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="detailModal" onclick="closeModal(event)">
+  <div class="modal">
+    <h3>📋 รายละเอียดการลงทะเบียน</h3>
+    <div id="modalContent"></div>
+    <div class="modal-actions">
+      <button class="btn-close-modal" onclick="closeModalDirect()">ปิด</button>
+      <button class="btn-print-modal" id="printModalBtn">🖨️ พิมพ์บัตรคิว</button>
+    </div>
+  </div>
+</div>
+
+<div id="printArea">
+  <div class="queue-ticket" id="queueTicket"></div>
+</div>
+
+<div id="toast"></div>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+  import { getFirestore, collection, addDoc, onSnapshot, updateDoc, deleteDoc, doc, query, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+  const app = initializeApp({
+    apiKey:            "AIzaSyCl0DcZ-q6OIAw2KV58eVN-92Wad9FIVA4",
+    authDomain:        "llll-a2748.firebaseapp.com",
+    projectId:         "llll-a2748",
+    storageBucket:     "llll-a2748.firebasestorage.app",
+    messagingSenderId: "692276230272",
+    appId:             "1:692276230272:web:f533c0e85762c630f90e65"
+  });
+  const db  = getFirestore(app);
+  const col = collection(db, "nurse_records");
+
+  // clock
+  function tick() {
+    document.getElementById('live-clock').textContent =
+      new Date().toLocaleDateString('th-TH',{weekday:'long',year:'numeric',month:'long',day:'numeric',hour:'2-digit',minute:'2-digit',second:'2-digit'});
+  }
+  tick(); setInterval(tick, 1000);
+
+  // สคริปต์เพิ่มเติมคุมการนับตัวเลขหลักนักเรียนเรียลไทม์ และล็อคป้อนเฉพาะตัวเลข
+  const fIdInput = document.getElementById('f-id');
+  const idWarnSpan = document.getElementById('id-warn');
+  
+  fIdInput.addEventListener('input', function() {
+    this.value = this.value.replace(/[^0-9]/g, ''); // พิมพ์ได้เฉพาะตัวเลขเท่านั้น
+    const currentLen = this.value.length;
+    idWarnSpan.textContent = `${currentLen} / 11 หลัก`;
+    if(currentLen === 11) {
+      idWarnSpan.classList.add('complete');
+    } else {
+      idWarnSpan.classList.remove('complete');
+    }
+  });
+
+  // theme
+  let dark = false;
+  document.getElementById('themeBtn').addEventListener('click', () => {
+    dark = !dark;
+    document.documentElement.setAttribute('data-theme', dark ? 'dark' : 'light');
+    document.getElementById('themeBtn').textContent = dark ? '☀️' : '🌙';
+    rebuildCharts();
+  });
+
+  // tabs
+  document.querySelectorAll('.tab-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+      btn.classList.add('active');
+      document.getElementById(btn.dataset.tab).classList.add('active');
+      if (btn.dataset.tab === 'tab-dash') rebuildCharts();
+    });
+  });
+
+  // sound
+  let soundOn = true;
+  const soundBtn = document.getElementById('soundBtn');
+  soundBtn.classList.add('on');
+  soundBtn.addEventListener('click', () => {
+    soundOn = !soundOn;
+    soundBtn.classList.toggle('on', soundOn);
+    soundBtn.textContent = soundOn ? '🔔 เสียง' : '🔕 ปิดเสียง';
+  });
+  function beep(urgent) {
+    if (!soundOn) return;
+    try {
+      const ctx = new (window.AudioContext || window.webkitAudioContext)();
+      const freqs = urgent ? [880, 1100, 880] : [660];
+      let t = ctx.currentTime;
+      freqs.forEach(f => {
+        const o = ctx.createOscillator(), g = ctx.createGain();
+        o.connect(g); g.connect(ctx.destination);
+        o.frequency.value = f; o.type = 'sine';
+        g.gain.setValueAtTime(0.3, t);
+        g.gain.exponentialRampToValueAtTime(0.001, t + 0.3);
+        o.start(t); o.stop(t + 0.3); t += 0.35;
+      });
+    } catch(e) {}
+  }
+
+  // state
+  let records = [], prevCount = -1, connected = false, curDetailId = null;
+  let cDept = null, cSev = null;
+
+  const connTimeout = setTimeout(() => {
+    if (!connected) {
+      setSync(false);
+      document.getElementById('tableBody').innerHTML =
+        `<tr class="empty-row"><td colspan="10">❌ เชื่อมต่อ Firebase ไม่ได้ — ตรวจสอบ Rules ใน Firebase Console</td></tr>`;
+    }
+  }, 8000);
+
+  onSnapshot(query(col), snap => {
+    connected = true; clearTimeout(connTimeout);
+    const newRecs = snap.docs.map(d => ({firestoreId:d.id,...d.data()}))
+      .sort((a,b) => (b.ts?.toMillis?.()??0)-(a.ts?.toMillis?.()??0));
+    const isNew = prevCount >= 0 && newRecs.length > prevCount;
+    const newIds = isNew ? newRecs.slice(0, newRecs.length - prevCount).map(r=>r.firestoreId) : [];
+    if (isNew) beep(newRecs.slice(0, newRecs.length-prevCount).some(r=>r.severity==='เร่งด่วน'));
+    prevCount = newRecs.length;
+    records = newRecs;
+    renderTable(newIds);
+    updateStats();
+    setSync(true);
+  }, err => {
+    connected = true; clearTimeout(connTimeout); setSync(false);
+    document.getElementById('tableBody').innerHTML =
+      `<tr class="empty-row"><td colspan="10">❌ Firebase ปฏิเสธ: กรุณาตั้ง Rules ให้ allow read, write: if true</td></tr>`;
+    toast('⚠️ Firebase: ' + err.message, '#922b21');
+  });
+
+  function setSync(ok) {
+    document.getElementById('syncDot').className = 'dot '+(ok?'online':'offline');
+    document.getElementById('syncText').textContent = ok ? '🔥 Real-time' : '❌ ออฟไลน์';
+  }
+
+  function updateStats() {
+    const t=records.length, w=records.filter(r=>r.status==='รอรับบริการ').length,
+          d=records.filter(r=>r.status==='เสร็จสิ้น').length, u=records.filter(r=>r.severity==='เร่งด่วน').length;
+    [['s-total',t],['d-total',t],['s-wait',w],['d-wait',w],['s-done',d],['d-done',d],['s-urg',u],['d-urg',u]]
+      .forEach(([id,v]) => { const el=document.getElementById(id); if(el) el.textContent=v; });
+  }
+
+  function rebuildCharts() {
+    const tc = dark ? '#d1d5db' : '#374151';
+    const gc = dark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.08)';
+    const pal = ['#c0392b','#e74c3c','#e67e22','#f1c40f','#2ecc71','#1abc9c','#3498db','#9b59b6','#e91e63','#00bcd4'];
+    // dept bar
+    const deptMap = {};
+    records.forEach(r => { deptMap[r.dept||'ไม่ระบุ'] = (deptMap[r.dept||'ไม่ระบุ']||0)+1; });
+    if (cDept) cDept.destroy();
+    cDept = new Chart(document.getElementById('chartDept'), {
+      type:'bar',
+      data:{ labels:Object.keys(deptMap), datasets:[{ data:Object.values(deptMap), backgroundColor:pal, borderRadius:6, borderSkipped:false }] },
+      options:{ responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false}},
+        scales:{ x:{ticks:{color:tc,font:{family:'Sarabun',size:10},maxRotation:45},grid:{color:gc}}, y:{ticks:{color:tc,stepSize:1},grid:{color:gc},beginAtZero:true} } }
+    });
+    // sev doughnut
+    const sc = {'ไม่เร่งด่วน':0,'ปานกลาง':0,'เร่งด่วน':0};
+    records.forEach(r => { if(sc[r.severity]!==undefined) sc[r.severity]++; });
+    if (cSev) cSev.destroy();
+    cSev = new Chart(document.getElementById('chartSev'), {
+      type:'doughnut',
+      data:{ labels:['ไม่เร่งด่วน','ปานกลาง','เร่งด่วน'], datasets:[{ data:Object.values(sc), backgroundColor:['#10b981','#f59e0b','#ef4444'], borderWidth:0 }] },
+      options:{ responsive:true, maintainAspectRatio:false, plugins:{legend:{position:'bottom',labels:{color:tc,font:{family:'Sarabun',size:11},padding:16}}}, cutout:'62%' }
+    });
+  }
+
+  window.renderTable = function(newIds=[]) {
+    const q=document.getElementById('searchBox').value.toLowerCase();
+    const dept=document.getElementById('filterDept').value;
+    const stat=document.getElementById('filterStatus').value;
+    const filtered=records.filter(r=>
+      (!q||(r.name||'').toLowerCase().includes(q)||(r.sid||'').includes(q))&&
+      (!dept||r.dept===dept)&&(!stat||r.status===stat));
+    const tbody=document.getElementById('tableBody');
+    if (!filtered.length) { tbody.innerHTML=`<tr class="empty-row"><td colspan="10">📭 ไม่พบรายการ</td></tr>`; return; }
+    const sc={'ไม่เร่งด่วน':'badge-low','ปานกลาง':'badge-mid','เร่งด่วน':'badge-high'};
+    const ss={'รอรับบริการ':'badge-wait','เสร็จสิ้น':'badge-done'};
+    
+    // ทำการผูกข้อมูล data-label เพื่อดึงไปแสดงผลโหมดเว็บบนมือถืออัตโนมัติ
+    tbody.innerHTML=filtered.map((r,i)=>`
+      <tr class="${newIds.includes(r.firestoreId)?'new-row':''}">
+        <td data-label="#">${i+1}</td>
+        <td data-label="รหัส"><b>${r.sid||'–'}</b></td>
+        <td data-label="ชื่อ–นามสกุล">${r.name||'–'}</td>
+        <td data-label="แผนก">${r.dept||'–'}</td>
+        <td data-label="ชั้น">${r.lvl||'–'}</td>
+        <td data-label="อาการ" style="max-width:120px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis" title="${r.symptom||''}">${r.symptom||'–'}</td>
+        <td data-label="ความเร่งด่วน"><span class="badge ${sc[r.severity]||''}">${r.severity||'–'}</span></td>
+        <td data-label="เวลา">${r.time||'–'}</td>
+        <td data-label="สถานะ"><span class="badge ${ss[r.status]||''}">${r.status||'–'}</span></td>
+        <td>
+          <button class="action-btn" onclick="showDetail('${r.firestoreId}')">🔍</button>
+          <button class="action-btn pbtn" onclick="printQueue('${r.firestoreId}')">🖨️</button>
+          ${r.status!=='เสร็จสิ้น'?`<button class="action-btn" onclick="markDone('${r.firestoreId}')">✅</button>`:''}
+          <button class="action-btn del" onclick="deleteRec('${r.firestoreId}')">🗑</button>
+        </td>
+      </tr>`).join('');
+  };
+
+  // ดักจับและผูกการเปลี่ยนแปลงค่าของตัวกรองในหน้า UI รายชื่อ
+  document.getElementById('searchBox').addEventListener('input', () => renderTable());
+  document.getElementById('filterDept').addEventListener('change', () => renderTable());
+  document.getElementById('filterStatus').addEventListener('change', () => renderTable());
+
+  window.submitForm = async function() {
+    const sid=document.getElementById('f-id').value.trim();
+    const fn=document.getElementById('f-fname').value.trim();
+    const ln=document.getElementById('f-lname').value.trim();
+    const dept=document.getElementById('f-dept').value;
+    const lvl=document.getElementById('f-level').value;
+    const sym=document.getElementById('f-symptom').value.trim();
+    const med=document.getElementById('f-med').value.trim();
+    const note=document.getElementById('f-note').value.trim();
+    const sev=document.querySelector('input[name="sev"]:checked').value;
+    
+    // บังคับการแจ้งเตือนเงื่อนไขหลักเลขประจำตัวนักเรียนต้องครบ 11 หลัก
+    if (!sid||!fn||!ln||!dept||!sym) { toast('กรุณากรอกข้อมูลที่จำเป็นให้ครบ','#922b21'); return; }
+    if (sid.length !== 11) { toast('⚠️ กรุณากรอกเลขประจำตัวนักเรียนให้ครบ 11 หลักก่อนนะเพื่อน!','#f59e0b'); return; }
+    
+    const btn=document.getElementById('submitBtn');
+    btn.disabled=true; btn.innerHTML='<div class="spinner"></div> กำลังบันทึก...';
+    try {
+      await addDoc(col,{sid,name:fn+' '+ln,dept,lvl,symptom:sym,severity:sev,medicine:med,note,
+        time:new Date().toLocaleTimeString('th-TH',{hour:'2-digit',minute:'2-digit'}),
+        status:'รอรับบริการ',ts:serverTimestamp()});
+      toast('✅ บันทึกสำเร็จ – '+fn+' '+ln,'#0f6e56');
+      ['f-id','f-fname','f-lname','f-symptom','f-med','f-note'].forEach(id=>document.getElementById(id).value='');
+      document.getElementById('f-dept').value=''; document.getElementById('f-level').value='';
+      document.getElementById('sev-low').checked=true;
+      document.getElementById('id-warn').textContent = '0 / 11 หลัก';
+      document.getElementById('id-warn').classList.remove('complete');
+    } catch(e) { toast('❌ '+e.message,'#922b21'); }
+    btn.disabled=false; btn.innerHTML='✅ บันทึกการลงทะเบียน';
+  };
+
+  // ผูกฟังก์ชันปุ่มบันทึก
+  document.getElementById('submitBtn').addEventListener('click', submitForm);
+
+  window.markDone = async fid => {
+    try { await updateDoc(doc(db,'nurse_records',fid),{status:'เสร็จสิ้น'}); toast('✅ อัปเดตสถานะเป็น "เสร็จสิ้น"','#0f6e56'); }
+    catch(e) { toast('❌ '+e.message,'#922b21'); }
+  };
+  
+  window.deleteRec = async fid => {
+    if (!confirm('ต้องการลบรายการนี้?')) return;
+    try { await deleteDoc(doc(db,'nurse_records',fid)); toast('🗑 ลบรายการเรียบร้อย','#374151'); }
+    catch(e) { toast('❌ '+e.message,'#922b21'); }
+  };
+  
+  window.showDetail = fid => {
+    const r=records.find(x=>x.firestoreId===fid); if(!r) return;
+    curDetailId=fid;
+    document.getElementById('modalContent').innerHTML = `
+      <div class="detail-row"><b>รหัสนักเรียน:</b><span>${r.sid||'–'}</span></div>
+      <div class="detail-row"><b>ชื่อ-นามสกุล:</b><span>${r.name||'–'}</span></div>
+      <div class="detail-row"><b>แผนก/สาขา:</b><span>${r.dept||'–'}</span></div>
+      <div class="detail-row"><b>ระดับชั้น:</b><span>${r.lvl||'–'}</span></div>
+      <div class="detail-row"><b>อาการ:</b><span>${r.symptom||'–'}</span></div>
+      <div class="detail-row"><b>ความเร่งด่วน:</b><span>${r.severity||'–'}</span></div>
+      <div class="detail-row"><b>ยา/การรักษา:</b><span>${r.medicine||'–'}</span></div>
+      <div class="detail-row"><b>หมายเหตุ:</b><span>${r.note||'–'}</span></div>
+      <div class="detail-row"><b>เวลาลงทะเบียน:</b><span>${r.time||'–'}</span></div>
+      <div class="detail-row"><b>สถานะระบบ:</b><span>${r.status||'–'}</span></div>
+    `;
+    document.getElementById('detailModal').classList.add('open');
+  };
+
+  window.closeModalDirect = () => {
+    document.getElementById('detailModal').classList.remove('open');
+  };
+
+  window.closeModal = (e) => {
+    if(e.target.id === 'detailModal') {
+      document.getElementById('detailModal').classList.remove('open');
+    }
+  };
+
+  window.printQueue = fid => {
+    const r=records.find(x=>x.firestoreId===fid); if(!r) return;
+    const ticket = document.getElementById('queueTicket');
+    ticket.innerHTML = `
+      <div class="q-school">วิทยาลัยเทคนิคหาดใหญ่<br>บัตรคิวรับบริการห้องพยาบาล</div>
+      <div class="q-label">หมายเลขคิวของคุณ</div>
+      <div class="q-num">#${r.sid ? r.sid.substring(r.sid.length - 3) : '000'}</div>
+      <div class="q-name">${r.name||'–'}</div>
+      <div class="q-dept">${r.dept||'–'} ${r.lvl||''}</div>
+      <div class="q-sev">ความรุนแรง: ${r.severity||'–'}</div>
+      <div class="q-time">เวลาพิมพ์: ${r.time||'–'} น.</div>
+    `;
+    window.print();
+  };
+
+  document.getElementById('printModalBtn').addEventListener('click', () => {
+    if(curDetailId) printQueue(curDetailId);
+  });
+
+  // ฟังก์ชัน Export CSV
+  document.getElementById('exportBtn').addEventListener('click', () => {
+    if(records.length === 0) { toast('📭 ไม่มีข้อมูลสำหรับการส่งออก', '#f59e0b'); return; }
+    let csv = "\uFEFF#ID,Student ID,Name,Department,Level,Symptom,Severity,Time,Status\n";
+    records.forEach((r, i) => {
+      csv += `${i+1},"${r.sid||''}","${r.name||''}","${r.dept||''}","${r.lvl||''}","${r.symptom||''}","${r.severity||''}","${r.time||''}","${r.status||''}"\n`;
+    });
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(blob);
+    link.setAttribute("download", `Nurse_Records_${new Date().toISOString().slice(0,10)}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  });
+
+  function toast(msg, bg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.style.background = bg || 'rgba(0,0,0,0.8)';
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 3000);
+  }
+</script>
 
 </body>
 </html>
