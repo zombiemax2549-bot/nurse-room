@@ -5,7 +5,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>ห้องพยาบาล – วิทยาลัยเทคนิคหาดใหญ่</title>
   <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&family=Prompt:wght@400;600;700;800&display=swap" rel="stylesheet"/>
+  <!-- Chart.js -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <!-- SweetAlert2 สำหรับหน้าต่างแจ้งเตือนสวยๆ -->
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  
   <style>
     :root {
       --red:      #c0392b;
@@ -131,7 +135,6 @@
     .table-toolbar { display:flex;align-items:center;gap:8px;padding:12px 16px;border-bottom:1px solid var(--border);flex-wrap:wrap; }
     .search-box { flex:1;min-width:160px;padding:8px 12px;border:1.5px solid var(--border);border-radius:8px;font-family:'Sarabun',sans-serif;font-size:0.86rem;color:var(--text);background:var(--surface2);outline:none; }
     .search-box:focus { border-color:var(--red); }
-    .filter-select { padding:8px 11px;border:1.5px solid var(--border);border-radius:8px;font-family:'Sarabun',sans-serif;font-size:0.86rem;color:var(--text);background:var(--surface2);cursor:pointer;outline:none; }
     .btn-export { padding:8px 14px;background:var(--green);color:#fff;border:none;border-radius:8px;font-family:'Sarabun',sans-serif;font-size:0.82rem;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:5px;white-space:nowrap;transition:opacity 0.2s; }
     .btn-export:hover { opacity:0.85; }
 
@@ -140,7 +143,7 @@
     thead th { padding:10px 13px;text-align:left;font-size:0.75rem;font-weight:700;color:var(--red-d);text-transform:uppercase;letter-spacing:0.05em;border-bottom:2px solid var(--border);white-space:nowrap; }
     [data-theme="dark"] thead { background:rgba(192,57,43,0.15); }
     [data-theme="dark"] thead th { color:#f5b7b1; }
-    tbody tr { border-bottom:1px solid var(--border);transition:background 0.15s; }
+    tbody tr { border-bottom:1px solid var(--border);transition:background 0.15s; cursor: pointer; }
     tbody tr:hover { background:var(--red-l); }
     tbody td { padding:10px 13px;font-size:0.86rem;vertical-align:middle;color:var(--text); }
 
@@ -152,7 +155,7 @@
     .badge-wait { background:#f3f4f6;color:#4b5563; }
     [data-theme="dark"] .badge-wait { background:#374151;color:#d1d5db; }
 
-    .action-btn { padding:4px 9px;border-radius:6px;border:1.5px solid var(--border);background:var(--surface);font-size:0.78rem;cursor:pointer;font-family:'Sarabun',sans-serif;transition:all 0.15s;margin-right:3px;color:var(--text); }
+    .action-btn { padding:4px 9px;border-radius:6px;border:1.5px solid var(--border);background:var(--surface);font-size:0.78rem;cursor:pointer;font-family:'Sarabun',sans-serif;transition:all 0.15s;margin-right:3px;color:var(--text); position: relative; z-index: 2; }
     .action-btn:hover { border-color:var(--red);color:var(--red); }
     .action-btn.del:hover { border-color:#ef4444;color:#ef4444; }
 
@@ -161,16 +164,24 @@
     .chart-title { font-family:'Prompt',sans-serif;font-size:0.9rem;font-weight:600;color:var(--text);margin-bottom:14px; }
     .chart-wrap { position:relative;height:240px; }
 
-    #toast { position:fixed;bottom:24px;right:24px;color:#fff;padding:12px 18px;border-radius:10px;font-size:0.86rem;box-shadow:0 8px 24px rgba(0,0,0,0.25);transform:translateY(80px);opacity:0;transition:all 0.35s ease;z-index:999;max-width:320px; }
-    #toast.show { transform:translateY(0);opacity:1; }
-
     @media (max-width:1024px) { .stats-row{grid-template-columns:repeat(2,1fr)} .dash-grid{grid-template-columns:1fr} }
     @media (max-width:768px) { .tab-content{padding:16px 14px 48px} header{padding:12px 14px} header h1{font-size:0.95rem} .tab-nav{padding:0 14px} }
+    
+    /* สไตล์สำหรับการพิมพ์ (Print) */
+    @media print {
+      body * { visibility: hidden; background: none !important; }
+      #print-area, #print-area * { visibility: visible; }
+      #print-area { position: absolute; left: 0; top: 0; width: 100%; }
+      .no-print { display: none !important; }
+    }
   </style>
 </head>
 <body>
 
-<header>
+<!-- พื้นที่สำหรับจัดการงานเอกสาร (จะถูกเติมด้วย JS เมื่อสั่งพิมพ์) -->
+<div id="print-area"></div>
+
+<header class="no-print">
   <div class="logo-circle">
     <img src="IMG_8808.jpeg" alt="ตราวิทยาลัย">
   </div>
@@ -189,13 +200,13 @@
   </div>
 </header>
 
-<div class="tab-nav">
+<div class="tab-nav no-print">
   <button class="tab-btn active" data-tab="tab-register">📝 ลงทะเบียน</button>
   <button class="tab-btn" data-tab="tab-list">📋 รายชื่อ</button>
   <button class="tab-btn" data-tab="tab-dash">📊 Dashboard</button>
 </div>
 
-<div class="tab-content active" id="tab-register">
+<div class="tab-content active no-print" id="tab-register">
   <div class="stats-row">
     <div class="stat-box red"><div class="stat-icon">👤</div><div><div class="stat-val" id="s-total">0</div><div class="stat-lbl">ทั้งหมดวันนี้</div></div></div>
     <div class="stat-box blue"><div class="stat-icon">⏳</div><div><div class="stat-val" id="s-wait">0</div><div class="stat-lbl">รอรับบริการ</div></div></div>
@@ -239,12 +250,12 @@
   </div>
 </div>
 
-<div class="tab-content" id="tab-list">
+<div class="tab-content no-print" id="tab-list">
   <div class="card">
-    <div class="card-header"><span>📋</span> รายชื่อนักเรียนเข้ารับบริการ</div>
+    <div class="card-header"><span>📋</span> รายชื่อนักเรียนเข้ารับบริการ (คลิกที่แถวเพื่อดูรายละเอียด)</div>
     <div class="table-toolbar">
       <input class="search-box" id="searchBox" placeholder="🔍 ค้นหาชื่อ / รหัส..."/>
-      <button class="btn-export" id="exportBtn">📥 CSV</button>
+      <button class="btn-export" id="exportBtn">🖨️ พิมพ์เอกสารราชการ</button>
     </div>
     <div style="overflow-x:auto;">
       <table>
@@ -255,19 +266,18 @@
   </div>
 </div>
 
-<div class="tab-content" id="tab-dash">
+<div class="tab-content no-print" id="tab-dash">
   <div class="dash-grid">
     <div class="chart-card"><div class="chart-title">📊 แผนกที่เข้ารับบริการ</div><div class="chart-wrap"><canvas id="chartDept"></canvas></div></div>
     <div class="chart-card"><div class="chart-title">🚨 ระดับความเร่งด่วน</div><div class="chart-wrap"><canvas id="chartSev"></canvas></div></div>
   </div>
 </div>
 
-<div id="toast"></div>
-
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
   import { getFirestore, collection, addDoc, onSnapshot, updateDoc, deleteDoc, doc, query, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
+  // Config Firebase
   const app = initializeApp({
     apiKey: "AIzaSyCl0DcZ-q6OIAw2KV58eVN-92Wad9FIVA4",
     authDomain: "llll-a2748.firebaseapp.com",
@@ -279,6 +289,27 @@
   const db = getFirestore(app);
   const col = collection(db, "nurse_records");
 
+  // --- 🔊 ระบบเสียง Effect ---
+  const clickSound = new Audio('https://www.soundjay.com/buttons/sounds/button-16.mp3');
+  const successSound = new Audio('https://www.soundjay.com/buttons/sounds/button-09.mp3');
+
+  function playClick() { 
+    clickSound.currentTime = 0; 
+    clickSound.play().catch(e => console.log("Audio play blocked")); 
+  }
+  function playSuccess() { 
+    successSound.currentTime = 0; 
+    successSound.play().catch(e => console.log("Audio play blocked")); 
+  }
+
+  // ผูกเสียงกับปุ่ม
+  document.addEventListener('click', (e) => {
+    if(e.target.tagName === 'BUTTON' || e.target.closest('.tab-btn')) {
+      playClick();
+    }
+  });
+
+  // นาฬิกา
   setInterval(() => {
     document.getElementById('live-clock').textContent = new Date().toLocaleDateString('th-TH',{weekday:'long',year:'numeric',month:'long',day:'numeric',hour:'2-digit',minute:'2-digit',second:'2-digit'});
   }, 1000);
@@ -287,6 +318,7 @@
   let chartDeptInstance = null;
   let chartSevInstance = null;
 
+  // Real-time listener
   onSnapshot(query(col), snap => {
     records = snap.docs.map(d => ({firestoreId: d.id, ...d.data()})).sort((a,b) => (b.ts?.toMillis() || 0) - (a.ts?.toMillis() || 0));
     renderTable();
@@ -308,44 +340,43 @@
     const sevCounts = { 'ไม่เร่งด่วน': 0, 'ปานกลาง': 0, 'เร่งด่วน': 0 };
 
     records.forEach(r => {
-      deptCounts[r.dept] = (deptCounts[r.dept] || 0) + 1;
+      if (r.dept) deptCounts[r.dept] = (deptCounts[r.dept] || 0) + 1;
       if (sevCounts.hasOwnProperty(r.severity)) sevCounts[r.severity]++;
     });
 
-    // Chart Dept (Bar)
     if (chartDeptInstance) chartDeptInstance.destroy();
     chartDeptInstance = new Chart(document.getElementById('chartDept'), {
       type: 'bar',
       data: {
         labels: Object.keys(deptCounts),
-        datasets: [{
-          label: 'จำนวนคน',
-          data: Object.values(deptCounts),
-          backgroundColor: '#3b82f6'
-        }]
+        datasets: [{ label: 'จำนวนคน', data: Object.values(deptCounts), backgroundColor: '#3b82f6' }]
       },
       options: { responsive: true, maintainAspectRatio: false }
     });
 
-    // Chart Severity (Doughnut)
     if (chartSevInstance) chartSevInstance.destroy();
     chartSevInstance = new Chart(document.getElementById('chartSev'), {
       type: 'doughnut',
       data: {
         labels: Object.keys(sevCounts),
-        datasets: [{
-          data: Object.values(sevCounts),
-          backgroundColor: ['#1abc9c', '#f59e0b', '#c0392b']
-        }]
+        datasets: [{ data: Object.values(sevCounts), backgroundColor: ['#1abc9c', '#f59e0b', '#c0392b'] }]
       },
       options: { responsive: true, maintainAspectRatio: false }
     });
   }
 
+  // --- ฟังก์ชัน Render ตาราง ---
   window.renderTable = function() {
     const tbody = document.getElementById('tableBody');
-    tbody.innerHTML = records.map((r, i) => `
-      <tr>
+    const searchTerm = document.getElementById('searchBox').value.toLowerCase();
+    
+    const filtered = records.filter(r => 
+      (r.name && r.name.toLowerCase().includes(searchTerm)) || 
+      (r.sid && r.sid.includes(searchTerm))
+    );
+
+    tbody.innerHTML = filtered.map((r, i) => `
+      <tr onclick="window.viewDetail('${r.firestoreId}')">
         <td>${i+1}</td>
         <td><b>${r.sid || '-'}</b></td>
         <td>${r.name || '-'}</td>
@@ -354,14 +385,42 @@
         <td><span class="badge ${r.severity === 'เร่งด่วน' ? 'badge-high' : r.severity === 'ปานกลาง' ? 'badge-mid' : 'badge-low'}">${r.severity}</span></td>
         <td>${r.time}</td>
         <td><span class="badge ${r.status === 'เสร็จสิ้น' ? 'badge-done' : 'badge-wait'}">${r.status}</span></td>
-        <td>
-          <button class="action-btn" onclick="markDone('${r.firestoreId}')">✅</button>
-          <button class="action-btn del" onclick="deleteRec('${r.firestoreId}')">🗑</button>
+        <td onclick="event.stopPropagation()">
+          <button class="action-btn" onclick="window.markDone('${r.firestoreId}')" title="เสร็จสิ้น">✅</button>
+          <button class="action-btn del" onclick="window.deleteRec('${r.firestoreId}')" title="ลบ">🗑</button>
         </td>
       </tr>
     `).join('');
   };
 
+  // --- ระบบค้นหา ---
+  document.getElementById('searchBox').oninput = () => renderTable();
+
+  // --- ฟังก์ชันดูรายละเอียด (Modal) ---
+  window.viewDetail = (id) => {
+    const r = records.find(rec => rec.firestoreId === id);
+    if (!r) return;
+    
+    Swal.fire({
+      title: `<span style="font-family:Prompt">รายละเอียดการเข้าใช้บริการ</span>`,
+      html: `
+        <div style="text-align:left; font-family:Sarabun; line-height:1.8; font-size: 0.95rem;">
+          <p><b>ชื่อ-สกุล:</b> ${r.name}</p>
+          <p><b>รหัสประจำตัว:</b> ${r.sid}</p>
+          <p><b>แผนก:</b> ${r.dept} (${r.lvl})</p>
+          <hr style="margin: 10px 0; border: 0.5px solid #eee;">
+          <p style="color: var(--red);"><b>อาการ/สาเหตุ:</b> ${r.symptom || '-'}</p>
+          <p><b>ยาที่ได้รับ:</b> ${r.medicine || '-'}</p>
+          <p><b>หมายเหตุ:</b> ${r.note || '-'}</p>
+          <p><b>เวลาที่บันทึก:</b> ${r.time} น.</p>
+        </div>
+      `,
+      confirmButtonText: 'ปิดหน้าต่าง',
+      confirmButtonColor: '#c0392b'
+    });
+  };
+
+  // --- บันทึกข้อมูล ---
   document.getElementById('submitBtn').onclick = async function() {
     const sid = document.getElementById('f-id').value.trim();
     const fn = document.getElementById('f-fname').value.trim();
@@ -370,9 +429,13 @@
     const sym = document.getElementById('f-symptom').value.trim();
     const sev = document.querySelector('input[name="sev"]:checked').value;
 
-    if (!sid || !fn || !ln || !dept || !sym) return toast('⚠️ กรุณากรอกข้อมูลให้ครบ', '#c0392b');
+    if (!sid || !fn || !ln || !dept || !sym) {
+      return Swal.fire({ icon: 'error', title: 'กรอกข้อมูลไม่ครบ', text: 'โปรดระบุข้อมูลที่มีเครื่องหมาย * ให้ครบถ้วน', confirmButtonColor: '#c0392b' });
+    }
 
-    this.disabled = true; this.innerHTML = 'กำลังบันทึก...';
+    this.disabled = true; 
+    this.innerHTML = 'กำลังบันทึก...';
+    
     try {
       await addDoc(col, {
         sid, name: fn + ' ' + ln, dept, lvl: document.getElementById('f-level').value,
@@ -381,21 +444,92 @@
         time: new Date().toLocaleTimeString('th-TH', {hour:'2-digit', minute:'2-digit'}),
         ts: serverTimestamp()
       });
-      toast('✅ บันทึกสำเร็จ!', '#0f6e56');
+      
+      playSuccess();
+      Swal.fire({
+        icon: 'success',
+        title: 'ลงทะเบียนสำเร็จ',
+        text: 'ข้อมูลถูกส่งไปยังเจ้าหน้าที่พยาบาลแล้ว',
+        timer: 2000,
+        showConfirmButton: false
+      });
+
       ['f-id','f-fname','f-lname','f-symptom','f-med','f-note'].forEach(id => document.getElementById(id).value = '');
-    } catch (e) { toast('❌ Error', '#922b21'); }
-    this.disabled = false; this.innerHTML = '✅ บันทึกการลงทะเบียน';
+    } catch (e) { 
+      Swal.fire({ icon: 'error', title: 'เกิดข้อผิดพลาด', text: 'ไม่สามารถบันทึกข้อมูลได้' });
+    }
+    this.disabled = false; 
+    this.innerHTML = '✅ บันทึกการลงทะเบียน';
   };
 
-  window.markDone = async id => await updateDoc(doc(db, 'nurse_records', id), {status: 'เสร็จสิ้น'});
-  window.deleteRec = async id => { if(confirm('ลบข้อมูล?')) await deleteDoc(doc(db, 'nurse_records', id)); };
+  // --- พิมพ์เอกสารราชการ ---
+  document.getElementById('exportBtn').onclick = () => {
+    const printArea = document.getElementById('print-area');
+    const today = new Date().toLocaleDateString('th-TH', { day: 'numeric', month: 'long', year: 'numeric' });
+    
+    let tableRows = records.map((r, i) => `
+      <tr>
+        <td style="border:1px solid #333; padding:5px; text-align:center;">${i+1}</td>
+        <td style="border:1px solid #333; padding:5px;">${r.sid}</td>
+        <td style="border:1px solid #333; padding:5px;">${r.name}</td>
+        <td style="border:1px solid #333; padding:5px;">${r.dept}</td>
+        <td style="border:1px solid #333; padding:5px;">${r.symptom || '-'}</td>
+        <td style="border:1px solid #333; padding:5px;">${r.medicine || '-'}</td>
+        <td style="border:1px solid #333; padding:5px; text-align:center;">${r.time}</td>
+      </tr>
+    `).join('');
 
-  function toast(msg, bg) {
-    const t = document.getElementById('toast');
-    t.textContent = msg; t.style.background = bg; t.classList.add('show');
-    setTimeout(() => t.classList.remove('show'), 3000);
-  }
+    printArea.innerHTML = `
+      <div style="padding: 40px; font-family: 'Sarabun', sans-serif; color: #000;">
+        <div style="text-align: center; margin-bottom: 20px;">
+          <h2 style="font-size: 1.4rem; margin-bottom: 5px;">แบบบันทึกการเข้ารับบริการห้องพยาบาล</h2>
+          <h3 style="font-size: 1.2rem; margin-bottom: 5px;">วิทยาลัยเทคนิคหาดใหญ่</h3>
+          <p>ประจำวันที่ ${today}</p>
+        </div>
+        <table style="width: 100%; border-collapse: collapse; margin-top: 20px;">
+          <thead>
+            <tr style="background: #eee;">
+              <th style="border:1px solid #333; padding:8px;">ลำดับ</th>
+              <th style="border:1px solid #333; padding:8px;">รหัสนักเรียน</th>
+              <th style="border:1px solid #333; padding:8px;">ชื่อ-นามสกุล</th>
+              <th style="border:1px solid #333; padding:8px;">แผนก</th>
+              <th style="border:1px solid #333; padding:8px;">อาการ/สาเหตุ</th>
+              <th style="border:1px solid #333; padding:8px;">ยาที่ได้รับ</th>
+              <th style="border:1px solid #333; padding:8px;">เวลา</th>
+            </tr>
+          </thead>
+          <tbody>${tableRows}</tbody>
+        </table>
+        <div style="margin-top: 40px; float: right; text-align: center; width: 250px;">
+          <p>ลงชื่อ..........................................</p>
+          <p>(..................................................)</p>
+          <p>เจ้าหน้าที่/อาจารย์ผู้ควบคุม</p>
+        </div>
+      </div>
+    `;
+    window.print();
+  };
 
+  // --- ฟังชันก์จัดการสถานะ ---
+  window.markDone = async id => {
+    await updateDoc(doc(db, 'nurse_records', id), {status: 'เสร็จสิ้น'});
+  };
+  
+  window.deleteRec = async id => { 
+    const result = await Swal.fire({
+      title: 'ยืนยันการลบ?',
+      text: "ข้อมูลนี้จะถูกลบถาวรจากฐานข้อมูล",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#c0392b',
+      cancelButtonColor: '#6b7280',
+      confirmButtonText: 'ลบเลย',
+      cancelButtonText: 'ยกเลิก'
+    });
+    if(result.isConfirmed) await deleteDoc(doc(db, 'nurse_records', id)); 
+  };
+
+  // ระบบสลับแท็บ
   document.querySelectorAll('.tab-btn').forEach(btn => {
     btn.onclick = () => {
       document.querySelectorAll('.tab-btn, .tab-content').forEach(el => el.classList.remove('active'));
@@ -404,6 +538,7 @@
     };
   });
 
+  // ระบบ Theme
   const themeBtn = document.getElementById('themeBtn');
   themeBtn.onclick = () => {
     const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
