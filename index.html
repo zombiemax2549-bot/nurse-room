@@ -3,286 +3,184 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NOXAME - System Portal</title>
-    
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Sarabun:wght@300;400;600&display=swap" rel="stylesheet">
-    
+    <title>NOXAME - Data Verification Portal</title>
     <style>
-        /* รีเซ็ต CSS พื้นฐาน */
+        /* ==========================================================================
+           1. ส่วนของ CSS (แต่งหน้าตาเว็บให้เหมือนในรูปภาพเป๊ะๆ)
+           ========================================================================== */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Sarabun', sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
 
-        /* Responsive Body รองรับทุกขนาดหน้าจอ */
+        /* พื้นหลังไล่เฉดสีมืดสไตล์ดาร์กโหมด */
         body {
-            background: radial-gradient(circle at center, #11131e 0%, #07080c 100%);
-            min-height: 100vh;
+            background: radial-gradient(circle at 50% 50%, #111723 0%, #070a0f 100%);
+            height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
-            padding: 20px;
-            color: #ffffff;
-            overflow-x: hidden;
-            position: relative;
+            overflow: hidden;
         }
 
-        /* แสงนีออนฟุ้งๆ ด้านหลัง (Glow Effects) */
-        body::before, body::after {
-            content: '';
-            position: absolute;
-            width: 300px;
-            height: 300px;
-            border-radius: 50%;
-            filter: blur(90px);
-            pointer-events: none;
-            z-index: 0;
-        }
-        body::before {
-            background: rgba(0, 242, 254, 0.12);
-            top: 15%;
-            left: 15%;
-        }
-        body::after {
-            background: rgba(157, 0, 255, 0.12);
-            bottom: 15%;
-            right: 15%;
-        }
-
-        /* Container สไตล์ Glassmorphism (กระจกโปร่งแสงล้ำๆ) */
-        .main-card {
-            background: rgba(255, 255, 255, 0.02);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            border: 1px solid rgba(255, 255, 255, 0.08);
+        /* กล่องโมเดลการ์ด NOXAME ตัวกลางหน้าจอ */
+        .card {
+            background: #17191e;
+            border: 1px solid rgba(255, 255, 255, 0.03);
+            padding: 45px 40px;
             border-radius: 24px;
-            padding: 45px 35px;
             width: 100%;
-            max-width: 460px;
-            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5),
-                        inset 0 1px 1px rgba(255, 255, 255, 0.1);
-            text-align: center;
-            z-index: 1;
-            transition: all 0.3s ease;
+            max-width: 440px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
         }
 
-        /* หัวข้อระบบ (Cyberpunk Vibe) */
-        .system-title {
-            font-family: 'Orbitron', sans-serif;
-            font-size: 2.6rem;
-            font-weight: 700;
+        /* ส่วนหัวข้อ Brand โลโก้ */
+        .brand-zone {
+            text-align: center;
+            margin-bottom: 5px;
+        }
+
+        .brand-logo {
+            font-size: 36px;
+            font-weight: 800;
             letter-spacing: 4px;
-            background: linear-gradient(135deg, #00f2fe 0%, #9d00ff 100%);
+            background: linear-gradient(45deg, #00d2ff, #a855f7);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            margin-bottom: 8px;
-            filter: drop-shadow(0 2px 10px rgba(0, 242, 254, 0.2));
-        }
-
-        .system-subtitle {
-            font-size: 0.85rem;
-            color: #7e8c9f;
-            letter-spacing: 2px;
-            margin-bottom: 40px;
             text-transform: uppercase;
         }
 
-        /* Form Control */
-        .form-group {
-            position: relative;
-            margin-bottom: 25px;
-            text-align: left;
+        .brand-sub {
+            font-size: 11px;
+            color: #475569;
+            letter-spacing: 2px;
+            margin-top: 6px;
+            text-transform: uppercase;
+            font-weight: 600;
         }
 
-        .form-group label {
-            display: block;
-            font-size: 0.85rem;
-            color: #00f2fe;
-            margin-bottom: 10px;
+        /* ส่วนกล่องข้อความ Area Input */
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            position: relative;
+        }
+
+        .input-label {
+            color: #00d2ff;
+            font-size: 14px;
             font-weight: 600;
             letter-spacing: 0.5px;
         }
 
-        /* ช่องกรอกข้อมูลเน้นพิมพ์ง่ายบนมือถือ */
-        .input-ctrl {
-            width: 100%;
-            padding: 16px 20px;
-            background: rgba(0, 0, 0, 0.3);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 14px;
-            color: #ffffff;
-            font-size: 1.2rem;
-            font-family: 'Orbitron', sans-serif;
-            letter-spacing: 3px;
-            transition: all 0.25s ease;
-        }
-
-        .input-ctrl:focus {
-            outline: none;
-            border-color: #00f2fe;
-            background: rgba(0, 0, 0, 0.5);
-            box-shadow: 0 0 15px rgba(0, 242, 254, 0.25);
-        }
-
-        /* ส่วนแสดงสถานะตัวเลขด้านล่างกล่องอินพุต */
-        .input-status {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-top: 8px;
-            font-size: 0.8rem;
-        }
-
-        .error-text {
-            color: #ff4a6b;
-            font-weight: 500;
-            display: none; /* ซ่อนไว้ก่อน จะแสดงเมื่อกรอกไม่ครบ */
-        }
-
-        .counter-text {
-            color: #64748b;
-            margin-left: auto;
-            font-family: 'Orbitron', sans-serif;
-        }
-
-        /* ปุ่มกดดีไซน์ลื่นไหล */
-        .btn-action {
-            width: 100%;
+        /* ช่องสำหรับกรอกตัวเลข */
+        .input-box {
+            background: #0f1115;
+            border: 1px solid #1e293b;
+            border-radius: 12px;
             padding: 16px;
-            background: linear-gradient(135deg, #00f2fe 0%, #4facfe 100%);
-            border: none;
-            border-radius: 14px;
-            color: #060814;
-            font-size: 1.1rem;
-            font-weight: 700;
-            letter-spacing: 1px;
-            cursor: pointer;
-            box-shadow: 0 4px 20px rgba(0, 242, 254, 0.25);
+            color: #ffffff;
+            font-size: 22px;
+            letter-spacing: 3px;
+            outline: none;
             transition: all 0.25s ease;
-            margin-top: 10px;
+            font-weight: 500;
         }
 
-        .btn-action:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 25px rgba(0, 242, 254, 0.45);
-            filter: brightness(1.1);
+        /* เอฟเฟกต์ตอนจิ้มกล่องพิม */
+        .input-box:focus {
+            border-color: #00d2ff;
+            box-shadow: 0 0 15px rgba(0, 210, 255, 0.15);
         }
 
-        .btn-action:active {
+        /* ตัวนับจำนวนตัวอักษรมุมขวาล่างช่องพิม */
+        .counter-zone {
+            text-align: right;
+            font-size: 12px;
+            color: #00d2ff;
+            margin-top: -2px;
+            font-weight: bold;
+        }
+
+        /* ปุ่ม VERIFY DATA เรืองแสงสีฟ้า */
+        .verify-btn {
+            background: linear-gradient(90deg, #00d2ff, #00a8ff);
+            border: none;
+            padding: 16px;
+            border-radius: 12px;
+            color: #000000;
+            font-size: 16px;
+            font-weight: 700;
+            letter-spacing: 1.5px;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            box-shadow: 0 4px 20px rgba(0, 210, 255, 0.35);
+            margin-top: 5px;
+            text-transform: uppercase;
+        }
+
+        .verify-btn:hover {
+            opacity: 0.95;
+            transform: translateY(-1px);
+            box-shadow: 0 6px 25px rgba(0, 210, 255, 0.55);
+        }
+
+        .verify-btn:active {
             transform: translateY(1px);
-        }
-
-        /* ==========================================
-           MOBILE MODE (ปรับแต่งการแสดงผลบนโทรศัพท์มือถือ)
-           ========================================== */
-        @media (max-width: 480px) {
-            body {
-                padding: 15px;
-                align-items: flex-start;
-                padding-top: 60px; /* เว้นระยะด้านบนให้ดูไม่ติดขอบเกินไป */
-            }
-
-            .main-card {
-                padding: 35px 20px;
-                border-radius: 20px;
-            }
-
-            .system-title {
-                font-size: 2.1rem;
-                letter-spacing: 2px;
-            }
-
-            .input-ctrl {
-                padding: 14px 16px;
-                font-size: 1.1rem;
-            }
-
-            .btn-action {
-                padding: 15px;
-                font-size: 1rem;
-            }
         }
     </style>
 </head>
 <body>
 
-    <div class="main-card">
-        <div class="system-title">NOXAME</div>
-        <div class="system-subtitle">Data Verification Portal</div>
+    <div class="card">
+        <div class="brand-zone">
+            <div class="brand-logo">NOXAME</div>
+            <div class="brand-sub">Data Verification Portal</div>
+        </div>
 
-        <form id="noxameForm" onsubmit="handleFormSubmit(event)">
-            <div class="form-group">
-                <label for="studentId">เลขประจำตัวนักเรียน</label>
-                <input 
-                    type="text" 
-                    id="studentId" 
-                    class="input-ctrl" 
-                    placeholder="XXXXXXXXXXX"
-                    inputmode="numeric" 
-                    pattern="[0-9]{11}" 
-                    maxlength="11" 
-                    autocomplete="off"
-                    oninput="validateAndCount(this)"
-                    required
-                >
-                <div class="input-status">
-                    <span id="errorAlert" class="error-text">❌ จำเป็นต้องกรอกให้ครบ 11 หลัก</span>
-                    <span id="digitCounter" class="counter-text">0/11</span>
-                </div>
-            </div>
+        <div class="input-group">
+            <label class="input-label" for="studentId">เลขประจำตัวนักเรียน</label>
+            <input type="text" id="studentId" class="input-box" maxlength="11" placeholder="•••••••••••" autocomplete="off">
+            <div class="counter-zone" id="charCount">0/11</div>
+        </div>
 
-            <button type="submit" class="btn-action">VERIFY DATA</button>
-        </form>
+        <button id="verifyBtn" class="verify-btn">VERIFY DATA</button>
     </div>
 
     <script>
-        // ฟังก์ชันควบคุมการพิมพ์: บังคับเฉพาะเลข 0-9 และคอยนับจำนวนตัวอักษร
-        function validateAndCount(input) {
-            // ดักจับและลบตัวอักษรหรือสัญลักษณ์ที่ไม่ใช่ตัวเลขออกทันที
-            let cleanValue = input.value.replace(/[^0-9]/g, '');
-            input.value = cleanValue;
+        const studentIdInput = document.getElementById('studentId');
+        const charCountText = document.getElementById('charCount');
+        const verifyBtn = document.getElementById('verifyBtn');
 
-            // อัปเดตตัวเลขบอกสถานะฝั่งขวา (เช่น 5/11)
-            const counter = document.getElementById('digitCounter');
-            counter.innerText = `${cleanValue.length}/11`;
+        // ระบบที่ 1: ดักจับตอนพิมพ์ (พิมพ์ได้เฉพาะตัวเลข 0-9 เท่านั้น และอัปเดตตัวนับตัวอักษรแบบ Real-time)
+        studentIdInput.addEventListener('input', function() {
+            // ล้างค่าดักเอาตัวอักษรภาษาไทย/อังกฤษ หรืออักขระพิเศษออกให้เหลือแค่ตัวเลข
+            this.value = this.value.replace(/[^0-9]/g, '');
+            
+            // อัปเดตตัวเลขบอกสถานะ เช่น 5/11, 11/11
+            let currentLength = this.value.length;
+            charCountText.innerText = `${currentLength}/11`;
+        });
 
-            // จัดการสีและสถานะเตือนภัยแบบ Real-time
-            const errorAlert = document.getElementById('errorAlert');
-            if (cleanValue.length === 11) {
-                errorAlert.style.display = 'none';
-                counter.style.color = '#00f2fe';
-                input.style.borderColor = 'rgba(255, 255, 255, 0.1)';
+        // ระบบที่ 2: ดักจับการกดปุ่ม VERIFY DATAเพื่อข้ามไปหน้าต่อไป
+        verifyBtn.addEventListener('click', function() {
+            let idValue = studentIdInput.value.trim();
+
+            // เช็คเงื่อนไขว่าถ้ากรอกเลขอะไรก็ได้จนครบ 11 หลักเป๊ะๆ ให้ผ่านฉลุย
+            if (idValue.length === 11) {
+                // ตัวอย่าง: ถ้าหน้าถัดไปของมึงคือหน้าลงทะเบียนพยาบาล ให้เปลี่ยนตรงนี้เป็น 'nurse-registration.html' ได้เลยครับ
+                window.location.href = 'nurse-registration.html'; 
             } else {
-                counter.style.color = '#64748b';
+                // ถ้ากรอกไม่ครบ 11 ตัว จะมี Alert เตือนขึ้นมา
+                alert('กรุณากรอกเลขประจำตัวให้ครบ 11 หลักก่อนนะเพื่อน!');
             }
-        }
-
-        // ฟังก์ชันเมื่อกดปุ่มยืนยัน (Submit)
-        function handleFormSubmit(event) {
-            event.preventDefault(); // ป้องกันการ reload หน้าจอเบื้องต้น
-            
-            const studentIdInput = document.getElementById('studentId');
-            const errorAlert = document.getElementById('errorAlert');
-
-            // ตรวจสอบขั้นสุดท้ายว่าครบ 11 หลักจริงไหม
-            if (studentIdInput.value.length !== 11) {
-                errorAlert.style.display = 'block';
-                studentIdInput.style.borderColor = '#ff4a6b';
-                studentIdInput.focus();
-                return false;
-            }
-
-            // --- วาง LOGIC เดิมของคุณต่อตรงนี้ได้เลยครับ ---
-            // ตัวอย่างเช่นการดึงข้อมูล หรือการเปลี่ยนหน้าเว็บไปหน้าแสดงผล:
-            alert('กำลังประมวลผลเลขประจำตัว: ' + studentIdInput.value);
-            
-            // ตัวอย่างเปลี่ยนหน้าไปไฟล์อื่น:
-            // window.location.href = "dashboard.html?id=" + studentIdInput.value;
-        }
+        });
     </script>
 
 </body>
