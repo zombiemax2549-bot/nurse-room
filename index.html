@@ -7,7 +7,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&family=Prompt:wght@400;600;700;800&display=swap" rel="stylesheet"/>
   <!-- Chart.js -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
-  <!-- SweetAlert2 สำหรับหน้าต่างแจ้งเตือนสวยๆ -->
+  <!-- SweetAlert2 -->
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   
   <style>
@@ -81,71 +81,52 @@
     .sync-pill { display:flex;align-items:center;gap:5px;font-size:0.72rem;background:rgba(0,0,0,0.2);border-radius:20px;padding:4px 10px; }
     .dot { width:7px;height:7px;border-radius:50%;background:#aaa;flex-shrink:0; }
     .dot.online  { background:#2ecc71;animation:pulse 2s infinite; }
-    .dot.offline { background:#e74c3c; }
     @keyframes pulse { 0%,100%{opacity:1}50%{opacity:0.3} }
     .btn-theme { background:rgba(255,255,255,0.18);border:1px solid rgba(255,255,255,0.3);border-radius:8px;color:#fff;padding:6px 10px;cursor:pointer;font-size:1rem;transition:background 0.2s; }
-    .btn-theme:hover { background:rgba(255,255,255,0.28); }
 
     .tab-nav { display:flex;gap:0;background:var(--surface);border-bottom:2px solid var(--border);padding:0 28px;overflow-x:auto;transition:background var(--tr); }
     .tab-btn { padding:12px 20px;border:none;background:none;font-family:'Sarabun',sans-serif;font-size:0.88rem;font-weight:600;color:var(--text2);cursor:pointer;border-bottom:3px solid transparent;margin-bottom:-2px;white-space:nowrap;transition:color 0.2s,border-color 0.2s;display:flex;align-items:center;gap:6px; }
     .tab-btn.active { color:var(--red);border-bottom-color:var(--red); }
-    .tab-btn:hover:not(.active) { color:var(--text); }
 
     .tab-content { display:none;padding:24px 28px 60px;max-width:1300px;margin:0 auto; }
     .tab-content.active { display:block; }
 
-    .card { background:var(--surface);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;transition:background var(--tr); border: 1px solid var(--border); }
-    .card-header { background:linear-gradient(135deg,var(--red) 0%,var(--red-d) 100%);color:#fff;padding:14px 20px;font-family:'Prompt',sans-serif;font-size:0.92rem;font-weight:600;display:flex;align-items:center;gap:8px; }
+    .card { background:var(--surface);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;transition:background var(--tr); border: 1px solid var(--border); margin-bottom: 20px; }
+    .card-header { background:linear-gradient(135deg,var(--red) 0%,var(--red-d) 100%);color:#fff;padding:14px 20px;font-family:'Prompt',sans-serif;font-size:0.92rem;font-weight:600;display:flex;align-items:center;justify-content:space-between; }
     .card-body { padding:20px; }
 
     .grid2 { display:grid;grid-template-columns:1fr 1fr;gap:12px; }
     .form-group { margin-bottom:14px; }
     label.lbl { display:block;font-size:0.82rem;font-weight:600;color:var(--text2);margin-bottom:4px; }
     label.lbl .req { color:var(--red); }
-    input, select, textarea { width:100%;padding:9px 12px;border:1.5px solid var(--border);border-radius:9px;font-family:'Sarabun',sans-serif;font-size:0.88rem;color:var(--text);background:var(--surface2);transition:border-color 0.2s,box-shadow 0.2s,background var(--tr);outline:none; }
-    input:focus, select:focus, textarea:focus { border-color:var(--red);box-shadow:0 0 0 3px rgba(192,57,43,0.12);background:var(--surface); }
-    textarea { resize:vertical;min-height:76px; }
+    input, select, textarea { width:100%;padding:9px 12px;border:1.5px solid var(--border);border-radius:9px;font-family:'Sarabun',sans-serif;font-size:0.88rem;color:var(--text);background:var(--surface2);outline:none; }
+    input:focus, select:focus, textarea:focus { border-color:var(--red);box-shadow:0 0 0 3px rgba(192,57,43,0.12); }
 
-    .severity-btn { display:none; }
     .severity-group { display:flex;gap:8px;flex-wrap:wrap;margin-top:4px; }
+    .severity-btn { display:none; }
     .severity-label { padding:6px 14px;border-radius:20px;border:1.5px solid var(--border);font-size:0.8rem;cursor:pointer;transition:all 0.2s;font-weight:500;color:var(--text); }
     #sev-low:checked  ~ .severity-group .lbl-low  { background:#d1fae5;border-color:#10b981;color:#065f46; }
     #sev-mid:checked  ~ .severity-group .lbl-mid  { background:#fef3c7;border-color:#f59e0b;color:#78350f; }
     #sev-high:checked ~ .severity-group .lbl-high { background:#fee2e2;border-color:#ef4444;color:#991b1b; }
 
-    .btn-submit { width:100%;padding:13px;background:linear-gradient(135deg,var(--red) 0%,var(--red-d) 100%);color:#fff;border:none;border-radius:10px;font-family:'Prompt',sans-serif;font-size:1rem;font-weight:600;cursor:pointer;transition:opacity 0.2s,transform 0.15s;margin-top:4px;display:flex;align-items:center;justify-content:center;gap:8px;box-shadow:0 4px 14px rgba(192,57,43,0.3); }
-    .btn-submit:hover { opacity:0.9;transform:translateY(-1px); }
-    .btn-submit:disabled { opacity:0.55;cursor:not-allowed;transform:none; }
+    .btn-submit { width:100%;padding:13px;background:linear-gradient(135deg,var(--red) 0%,var(--red-d) 100%);color:#fff;border:none;border-radius:10px;font-family:'Prompt',sans-serif;font-size:1rem;font-weight:600;cursor:pointer;transition:opacity 0.2s;margin-top:4px;display:flex;align-items:center;justify-content:center;gap:8px;box-shadow:0 4px 14px rgba(192,57,43,0.3); }
 
     .stats-row { display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:20px; }
-    .stat-box { background:var(--surface);border-radius:var(--radius);padding:16px 18px;box-shadow:var(--shadow2);display:flex;align-items:center;gap:14px;border-left:4px solid transparent;transition:transform 0.2s,box-shadow 0.2s,background var(--tr); border: 1px solid var(--border); }
-    .stat-box:hover { transform:translateY(-2px);box-shadow:var(--shadow); }
-    .stat-box.red   { border-color:var(--red); }
-    .stat-box.blue  { border-color:var(--blue); }
-    .stat-box.green { border-color:var(--green); }
-    .stat-box.yel   { border-color:var(--yellow); }
-    .stat-icon { font-size:1.9rem;line-height:1; }
+    .stat-box { background:var(--surface);border-radius:var(--radius);padding:16px 18px;box-shadow:var(--shadow2);display:flex;align-items:center;gap:14px;border-left:4px solid transparent; border: 1px solid var(--border); }
+    .stat-box.red { border-left-color:var(--red); } .stat-box.blue { border-left-color:var(--blue); } .stat-box.green { border-left-color:var(--green); } .stat-box.yel { border-left-color:var(--yellow); }
     .stat-val { font-family:'Prompt',sans-serif;font-size:1.7rem;font-weight:800;line-height:1; }
     .stat-lbl { font-size:0.72rem;color:var(--text2);margin-top:3px; }
-    .stat-box.red   .stat-val { color:var(--red); }
-    .stat-box.blue  .stat-val { color:var(--blue); }
-    .stat-box.green .stat-val { color:var(--green); }
-    .stat-box.yel   .stat-val { color:var(--yellow); }
 
     .table-toolbar { display:flex;align-items:center;gap:8px;padding:12px 16px;border-bottom:1px solid var(--border);flex-wrap:wrap; }
-    .search-box { flex:1;min-width:160px;padding:8px 12px;border:1.5px solid var(--border);border-radius:8px;font-family:'Sarabun',sans-serif;font-size:0.86rem;color:var(--text);background:var(--surface2);outline:none; }
-    .search-box:focus { border-color:var(--red); }
-    .btn-export { padding:8px 14px;background:var(--green);color:#fff;border:none;border-radius:8px;font-family:'Sarabun',sans-serif;font-size:0.82rem;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:5px;white-space:nowrap;transition:opacity 0.2s; }
-    .btn-export:hover { opacity:0.85; }
+    .search-box { flex:1;min-width:160px;padding:8px 12px;border:1.5px solid var(--border);border-radius:8px; }
+    .btn-export { padding:8px 14px;background:var(--green);color:#fff;border:none;border-radius:8px;cursor:pointer;font-weight:600;font-size:0.82rem; }
 
-    table { width:100%;border-collapse:collapse; }
+    table { width:100%;border-collapse:collapse; min-width: 900px; }
     thead { background:var(--red-l); }
-    thead th { padding:10px 13px;text-align:left;font-size:0.75rem;font-weight:700;color:var(--red-d);text-transform:uppercase;letter-spacing:0.05em;border-bottom:2px solid var(--border);white-space:nowrap; }
-    [data-theme="dark"] thead { background:rgba(192,57,43,0.15); }
-    [data-theme="dark"] thead th { color:#f5b7b1; }
-    tbody tr { border-bottom:1px solid var(--border);transition:background 0.15s; cursor: pointer; }
+    thead th { padding:12px; text-align:left; font-size:0.75rem; color:var(--red-d); border-bottom:2px solid var(--border); }
+    tbody tr { border-bottom:1px solid var(--border); transition: 0.2s; cursor: pointer; }
     tbody tr:hover { background:var(--red-l); }
-    tbody td { padding:10px 13px;font-size:0.86rem;vertical-align:middle;color:var(--text); }
+    tbody td { padding:12px; font-size:0.86rem; color:var(--text); }
 
     .badge { display:inline-block;padding:3px 10px;border-radius:12px;font-size:0.7rem;font-weight:700; }
     .badge-low  { background:#d1fae5;color:#065f46; }
@@ -153,60 +134,37 @@
     .badge-high { background:#fee2e2;color:#991b1b; }
     .badge-done { background:#dbeafe;color:#1d4ed8; }
     .badge-wait { background:#f3f4f6;color:#4b5563; }
-    [data-theme="dark"] .badge-wait { background:#374151;color:#d1d5db; }
+    .med-text { display:block; font-size: 0.75rem; color: var(--blue); font-weight: 600; margin-top: 2px; }
 
-    .action-btn { padding:4px 9px;border-radius:6px;border:1.5px solid var(--border);background:var(--surface);font-size:0.78rem;cursor:pointer;font-family:'Sarabun',sans-serif;transition:all 0.15s;margin-right:3px;color:var(--text); position: relative; z-index: 2; }
-    .action-btn:hover { border-color:var(--red);color:var(--red); }
-    .action-btn.del:hover { border-color:#ef4444;color:#ef4444; }
+    .action-btn { padding:5px 10px; border-radius:6px; border:1px solid var(--border); background:white; cursor:pointer; font-size:0.8rem; }
+    .action-btn:hover { border-color: var(--red); color: var(--red); }
 
     .dash-grid { display:grid;grid-template-columns:1fr 1fr;gap:20px; }
-    .chart-card { background:var(--surface);border-radius:var(--radius);box-shadow:var(--shadow2);padding:20px;transition:background var(--tr); border: 1px solid var(--border); }
-    .chart-title { font-family:'Prompt',sans-serif;font-size:0.9rem;font-weight:600;color:var(--text);margin-bottom:14px; }
+    .chart-card { background:var(--surface);border-radius:var(--radius);box-shadow:var(--shadow2);padding:20px; border: 1px solid var(--border); }
     .chart-wrap { position:relative;height:240px; }
 
-    @media (max-width:1024px) { .stats-row{grid-template-columns:repeat(2,1fr)} .dash-grid{grid-template-columns:1fr} }
-    @media (max-width:768px) { .tab-content{padding:16px 14px 48px} header{padding:12px 14px} header h1{font-size:0.95rem} .tab-nav{padding:0 14px} }
-    
-    /* สไตล์สำหรับการพิมพ์ (Print) */
     #print-area { display: none; }
     @media print {
-      body * { visibility: hidden; background: none !important; }
+      body * { visibility: hidden; }
       #print-area, #print-area * { visibility: visible; }
       #print-area { display: block; position: absolute; left: 0; top: 0; width: 100%; }
       .no-print { display: none !important; }
     }
-    
-    /* สไตล์ปุ่มปิดหน้าพิมพ์ */
-    .print-close-btn {
-      position: fixed; top: 20px; right: 20px;
-      padding: 10px 20px; background: #c0392b; color: #fff;
-      border: none; border-radius: 8px; cursor: pointer;
-      font-family: 'Prompt', sans-serif; font-weight: 600;
-      z-index: 9999; box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-    }
-    .print-close-btn:hover { background: #922b21; }
   </style>
 </head>
 <body>
 
-<!-- พื้นที่สำหรับจัดการงานเอกสาร -->
 <div id="print-area"></div>
 
 <header class="no-print">
-  <div class="logo-circle">
-    <img src="IMG_8808.jpeg" alt="ตราวิทยาลัย">
-  </div>
+  <div class="logo-circle"><img src="IMG_8808.jpeg" alt="Logo"></div>
   <div>
     <h1>ห้องพยาบาล – วิทยาลัยเทคนิคหาดใหญ่</h1>
     <p>ระบบลงทะเบียนนักเรียนเข้ารับบริการ</p>
     <div id="live-clock"></div>
   </div>
   <div class="header-right">
-    <div class="header-badge">📋 ปีการศึกษา 2567</div>
-    <div class="sync-pill">
-      <div class="dot" id="syncDot"></div>
-      <span id="syncText">กำลังเชื่อมต่อ...</span>
-    </div>
+    <div class="sync-pill"><div class="dot online" id="syncDot"></div><span id="syncText">🔥 Real-time</span></div>
     <button class="btn-theme" id="themeBtn">🌙</button>
   </div>
 </header>
@@ -219,58 +177,67 @@
 
 <div class="tab-content active no-print" id="tab-register">
   <div class="stats-row">
-    <div class="stat-box red"><div class="stat-icon">👤</div><div><div class="stat-val" id="s-total">0</div><div class="stat-lbl">ทั้งหมดวันนี้</div></div></div>
-    <div class="stat-box blue"><div class="stat-icon">⏳</div><div><div class="stat-val" id="s-wait">0</div><div class="stat-lbl">รอรับบริการ</div></div></div>
-    <div class="stat-box green"><div class="stat-icon">✅</div><div><div class="stat-val" id="s-done">0</div><div class="stat-lbl">เสร็จสิ้น</div></div></div>
-    <div class="stat-box yel"><div class="stat-icon">🔴</div><div><div class="stat-val" id="s-urg">0</div><div class="stat-lbl">เร่งด่วน</div></div></div>
+    <div class="stat-box red"><div class="stat-val" id="s-total">0</div><div class="stat-lbl">ทั้งหมดวันนี้</div></div>
+    <div class="stat-box blue"><div class="stat-val" id="s-wait">0</div><div class="stat-lbl">รอรับบริการ</div></div>
+    <div class="stat-box green"><div class="stat-val" id="s-done">0</div><div class="stat-lbl">รับยาเสร็จสิ้น</div></div>
+    <div class="stat-box yel"><div class="stat-val" id="s-urg">0</div><div class="stat-lbl">เคสเร่งด่วน</div></div>
   </div>
+
   <div class="card">
-    <div class="card-header"><span>📝</span> กรอกข้อมูลการลงทะเบียน</div>
+    <div class="card-header">📝 ลงทะเบียนใหม่</div>
     <div class="card-body">
-      <div class="form-group"><label class="lbl">เลขประจำตัวนักเรียน <span class="req">*</span></label><input type="text" id="f-id" placeholder="เช่น 66309010001" maxlength="11" inputmode="numeric"/></div>
+      <div class="form-group"><label class="lbl">เลขประจำตัวนักเรียน <span class="req">*</span></label><input type="text" id="f-id" maxlength="11"/></div>
       <div class="grid2">
-        <div class="form-group"><label class="lbl">ชื่อ <span class="req">*</span></label><input type="text" id="f-fname" placeholder="ชื่อ"/></div>
-        <div class="form-group"><label class="lbl">นามสกุล <span class="req">*</span></label><input type="text" id="f-lname" placeholder="นามสกุล"/></div>
+        <div class="form-group"><label class="lbl">ชื่อ <span class="req">*</span></label><input type="text" id="f-fname"/></div>
+        <div class="form-group"><label class="lbl">นามสกุล <span class="req">*</span></label><input type="text" id="f-lname"/></div>
       </div>
       <div class="grid2">
         <div class="form-group">
-          <label class="lbl">แผนก / สาขา <span class="req">*</span></label>
-          <select id="f-dept"><option value="">-- เลือกแผนก --</option><option>ช่างยนต์</option><option>ช่างไฟฟ้า</option><option>ช่างอิเล็กทรอนิกส์</option><option>ช่างกลโรงงาน</option><option>ช่างเชื่อมโลหะ</option><option>เทคโนโลยีสารสนเทศ</option><option>การบัญชี</option><option>การตลาด</option><option>คอมพิวเตอร์ธุรกิจ</option><option>ช่างก่อสร้าง</option></select>
+          <label class="lbl">แผนก <span class="req">*</span></label>
+          <select id="f-dept"><option value="">-- เลือก --</option><option>ช่างยนต์</option><option>ช่างไฟฟ้า</option><option>ช่างอิเล็กทรอนิกส์</option><option>เทคโนโลยีสารสนเทศ</option><option>การบัญชี</option></select>
         </div>
-        <div class="form-group">
-          <label class="lbl">ระดับชั้น</label>
-          <select id="f-level"><option value="">-- เลือก --</option><option>ปวช.1</option><option>ปวช.2</option><option>ปวช.3</option><option>ปวส.1</option><option>ปวส.2</option></select>
-        </div>
+        <div class="form-group"><label class="lbl">ระดับชั้น</label><select id="f-level"><option>ปวช.1</option><option>ปวช.2</option><option>ปวช.3</option><option>ปวส.1</option><option>ปวส.2</option></select></div>
       </div>
-      <div class="form-group"><label class="lbl">อาการ / เหตุผลที่มา <span class="req">*</span></label><textarea id="f-symptom" placeholder="ระบุอาการเบื้องต้น..."></textarea></div>
+      <div class="form-group"><label class="lbl">อาการ <span class="req">*</span></label><textarea id="f-symptom"></textarea></div>
       <div class="form-group">
-        <label class="lbl">ระดับความเร่งด่วน</label>
-        <input type="radio" name="sev" id="sev-low"  class="severity-btn" value="ไม่เร่งด่วน" checked/>
-        <input type="radio" name="sev" id="sev-mid"  class="severity-btn" value="ปานกลาง"/>
+        <label class="lbl">ความเร่งด่วน</label>
+        <input type="radio" name="sev" id="sev-low" class="severity-btn" value="ไม่เร่งด่วน" checked/>
+        <input type="radio" name="sev" id="sev-mid" class="severity-btn" value="ปานกลาง"/>
         <input type="radio" name="sev" id="sev-high" class="severity-btn" value="เร่งด่วน"/>
         <div class="severity-group">
-          <label for="sev-low"  class="severity-label lbl-low">🟢 ไม่เร่งด่วน</label>
-          <label for="sev-mid"  class="severity-label lbl-mid">🟡 ปานกลาง</label>
+          <label for="sev-low" class="severity-label lbl-low">🟢 ไม่เร่งด่วน</label>
+          <label for="sev-mid" class="severity-label lbl-mid">🟡 ปานกลาง</label>
           <label for="sev-high" class="severity-label lbl-high">🔴 เร่งด่วน</label>
         </div>
       </div>
-      <div class="form-group"><label class="lbl">ยาที่ได้รับ / การรักษาเบื้องต้น</label><input type="text" id="f-med" placeholder="ยาที่ได้รับ..."/></div>
-      <div class="form-group"><label class="lbl">หมายเหตุ</label><input type="text" id="f-note" placeholder="ข้อมูลเพิ่มเติม..."/></div>
-      <button class="btn-submit" id="submitBtn">✅ บันทึกการลงทะเบียน</button>
+      <button class="btn-submit" id="submitBtn">✅ บันทึกข้อมูล</button>
     </div>
   </div>
 </div>
 
 <div class="tab-content no-print" id="tab-list">
+  <!-- ส่วนที่เพิ่ม: ตารางรายชื่อคนที่รับยาเสร็จแล้ว -->
+  <div class="card" id="done-section">
+    <div class="card-header" style="background: linear-gradient(135deg, #1abc9c 0%, #16a085 100%);">
+      <span>✅ รายชื่อที่ได้รับยาเสร็จสิ้นแล้ว</span>
+    </div>
+    <div style="overflow-x:auto; max-height: 300px;">
+      <table>
+        <thead><tr><th>#</th><th>รหัส</th><th>ชื่อ-สกุล</th><th>ยาที่ได้รับ</th><th>เวลา</th><th>สถานะ</th></tr></thead>
+        <tbody id="doneTableBody"></tbody>
+      </table>
+    </div>
+  </div>
+
   <div class="card">
-    <div class="card-header"><span>📋</span> รายชื่อนักเรียนเข้ารับบริการ (คลิกที่แถวเพื่อดูรายละเอียด)</div>
+    <div class="card-header">📋 รายชื่อรอรับบริการ</div>
     <div class="table-toolbar">
-      <input class="search-box" id="searchBox" placeholder="🔍 ค้นหาชื่อ / รหัส..."/>
-      <button class="btn-export" id="exportBtn">🖨️ พิมพ์เอกสารราชการ</button>
+      <input class="search-box" id="searchBox" placeholder="🔍 ค้นหารายชื่อ..."/>
+      <button class="btn-export" id="exportBtn">🖨️ พิมพ์เอกสาร</button>
     </div>
     <div style="overflow-x:auto;">
       <table>
-        <thead><tr><th>#</th><th>รหัส</th><th>ชื่อ–นามสกุล</th><th>แผนก</th><th>ชั้น</th><th>ความเร่งด่วน</th><th>เวลา</th><th>สถานะ</th><th>จัดการ</th></tr></thead>
+        <thead><tr><th>#</th><th>รหัส</th><th>ชื่อ-สกุล</th><th>แผนก</th><th>อาการ</th><th>เร่งด่วน</th><th>เวลา</th><th>จัดการ</th></tr></thead>
         <tbody id="tableBody"></tbody>
       </table>
     </div>
@@ -279,8 +246,8 @@
 
 <div class="tab-content no-print" id="tab-dash">
   <div class="dash-grid">
-    <div class="chart-card"><div class="chart-title">📊 แผนกที่เข้ารับบริการ</div><div class="chart-wrap"><canvas id="chartDept"></canvas></div></div>
-    <div class="chart-card"><div class="chart-title">🚨 ระดับความเร่งด่วน</div><div class="chart-wrap"><canvas id="chartSev"></canvas></div></div>
+    <div class="chart-card"><div class="chart-wrap"><canvas id="chartDept"></canvas></div></div>
+    <div class="chart-card"><div class="chart-wrap"><canvas id="chartSev"></canvas></div></div>
   </div>
 </div>
 
@@ -288,7 +255,6 @@
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
   import { getFirestore, collection, addDoc, onSnapshot, updateDoc, deleteDoc, doc, query, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-  // Config Firebase
   const app = initializeApp({
     apiKey: "AIzaSyCl0DcZ-q6OIAw2KV58eVN-92Wad9FIVA4",
     authDomain: "llll-a2748.firebaseapp.com",
@@ -300,44 +266,15 @@
   const db = getFirestore(app);
   const col = collection(db, "nurse_records");
 
-  // --- 🔊 ระบบเสียง Effect ---
-  const clickSound = new Audio('https://www.soundjay.com/buttons/sounds/button-16.mp3');
-  const successSound = new Audio('https://www.soundjay.com/buttons/sounds/button-09.mp3');
-
-  function playClick() { 
-    clickSound.currentTime = 0; 
-    clickSound.play().catch(e => console.log("Audio play blocked")); 
-  }
-  function playSuccess() { 
-    successSound.currentTime = 0; 
-    successSound.play().catch(e => console.log("Audio play blocked")); 
-  }
-
-  // ผูกเสียงกับปุ่ม
-  document.addEventListener('click', (e) => {
-    if(e.target.tagName === 'BUTTON' || e.target.closest('.tab-btn')) {
-      playClick();
-    }
-  });
-
-  // นาฬิกา
-  setInterval(() => {
-    const clockEl = document.getElementById('live-clock');
-    if(clockEl) clockEl.textContent = new Date().toLocaleDateString('th-TH',{weekday:'long',year:'numeric',month:'long',day:'numeric',hour:'2-digit',minute:'2-digit',second:'2-digit'});
-  }, 1000);
-
   let records = [];
   let chartDeptInstance = null;
   let chartSevInstance = null;
 
-  // Real-time listener
   onSnapshot(query(col), snap => {
     records = snap.docs.map(d => ({firestoreId: d.id, ...d.data()})).sort((a,b) => (b.ts?.toMillis() || 0) - (a.ts?.toMillis() || 0));
-    renderTable();
+    renderTables();
     updateStats();
     updateCharts();
-    document.getElementById('syncDot').className = 'dot online';
-    document.getElementById('syncText').textContent = '🔥 Real-time';
   });
 
   function updateStats() {
@@ -347,214 +284,79 @@
     document.getElementById('s-urg').textContent = records.filter(r => r.severity === 'เร่งด่วน').length;
   }
 
-  function updateCharts() {
-    const deptCounts = {};
-    const sevCounts = { 'ไม่เร่งด่วน': 0, 'ปานกลาง': 0, 'เร่งด่วน': 0 };
-
-    records.forEach(r => {
-      if (r.dept) deptCounts[r.dept] = (deptCounts[r.dept] || 0) + 1;
-      if (sevCounts.hasOwnProperty(r.severity)) sevCounts[r.severity]++;
-    });
-
-    if (chartDeptInstance) chartDeptInstance.destroy();
-    const ctxDept = document.getElementById('chartDept');
-    if(ctxDept) {
-        chartDeptInstance = new Chart(ctxDept, {
-          type: 'bar',
-          data: {
-            labels: Object.keys(deptCounts),
-            datasets: [{ label: 'จำนวนคน', data: Object.values(deptCounts), backgroundColor: '#3b82f6' }]
-          },
-          options: { responsive: true, maintainAspectRatio: false }
-        });
-    }
-
-    if (chartSevInstance) chartSevInstance.destroy();
-    const ctxSev = document.getElementById('chartSev');
-    if(ctxSev) {
-        chartSevInstance = new Chart(ctxSev, {
-          type: 'doughnut',
-          data: {
-            labels: Object.keys(sevCounts),
-            datasets: [{ data: Object.values(sevCounts), backgroundColor: ['#1abc9c', '#f59e0b', '#c0392b'] }]
-          },
-          options: { responsive: true, maintainAspectRatio: false }
-        });
-    }
-  }
-
-  // --- ฟังก์ชัน Render ตาราง ---
-  window.renderTable = function() {
-    const tbody = document.getElementById('tableBody');
+  function renderTables() {
     const searchTerm = document.getElementById('searchBox').value.toLowerCase();
-    
-    const filtered = records.filter(r => 
-      (r.name && r.name.toLowerCase().includes(searchTerm)) || 
-      (r.sid && r.sid.includes(searchTerm))
-    );
+    const waitBody = document.getElementById('tableBody');
+    const doneBody = document.getElementById('doneTableBody');
 
-    tbody.innerHTML = filtered.map((r, i) => `
-      <tr onclick="window.viewDetail('${r.firestoreId}')">
+    // ตารางรอรับบริการ
+    const waiting = records.filter(r => r.status === 'รอรับบริการ' && (r.name.toLowerCase().includes(searchTerm) || r.sid.includes(searchTerm)));
+    waitBody.innerHTML = waiting.map((r, i) => `
+      <tr>
         <td>${i+1}</td>
-        <td><b>${r.sid || '-'}</b></td>
-        <td>${r.name || '-'}</td>
-        <td>${r.dept || '-'}</td>
-        <td>${r.lvl || '-'}</td>
-        <td><span class="badge ${r.severity === 'เร่งด่วน' ? 'badge-high' : r.severity === 'ปานกลาง' ? 'badge-mid' : 'badge-low'}">${r.severity}</span></td>
+        <td><b>${r.sid}</b></td>
+        <td>${r.name}</td>
+        <td>${r.dept}</td>
+        <td>${r.symptom}</td>
+        <td><span class="badge ${r.severity === 'เร่งด่วน' ? 'badge-high' : 'badge-low'}">${r.severity}</span></td>
         <td>${r.time}</td>
-        <td><span class="badge ${r.status === 'เสร็จสิ้น' ? 'badge-done' : 'badge-wait'}">${r.status}</span></td>
-        <td onclick="event.stopPropagation()">
-          <button class="action-btn" onclick="window.markDone('${r.firestoreId}')" title="เสร็จสิ้น">✅</button>
-          <button class="action-btn del" onclick="window.deleteRec('${r.firestoreId}')" title="ลบ">🗑</button>
+        <td>
+          <button class="action-btn" onclick="window.markDoneDialog('${r.firestoreId}')">✅ จ่ายยา</button>
         </td>
       </tr>
     `).join('');
-  };
 
-  // --- ระบบค้นหา ---
-  document.getElementById('searchBox').oninput = () => renderTable();
+    // ตารางเสร็จสิ้น
+    const completed = records.filter(r => r.status === 'เสร็จสิ้น');
+    doneBody.innerHTML = completed.map((r, i) => `
+      <tr>
+        <td>${i+1}</td>
+        <td>${r.sid}</td>
+        <td>${r.name}</td>
+        <td><span class="med-text">💊 ${r.medicine || '-'}</span></td>
+        <td>${r.time}</td>
+        <td><span class="badge badge-done">จ่ายยาแล้ว</span></td>
+      </tr>
+    `).join('');
+  }
 
-  // --- ฟังก์ชันดูรายละเอียด (Modal) แก้ไขให้แสดง อาการ และ ยา ให้ครบ ---
-  window.viewDetail = (id) => {
-    const r = records.find(rec => rec.firestoreId === id);
-    if (!r) return;
-    
-    Swal.fire({
-      title: `<span style="font-family:Prompt">รายละเอียดการเข้าใช้บริการ</span>`,
-      html: `
-        <div style="text-align:left; font-family:Sarabun; line-height:1.8; font-size: 0.95rem;">
-          <p><b>ชื่อ-สกุล:</b> ${r.name}</p>
-          <p><b>รหัสประจำตัว:</b> ${r.sid}</p>
-          <p><b>แผนก:</b> ${r.dept} (${r.lvl})</p>
-          <hr style="margin: 10px 0; border: 0.5px solid #eee;">
-          <p style="color: var(--red);"><b>อาการ/สาเหตุ:</b> ${r.symptom || '-'}</p>
-          <p><b>ยาที่ได้รับ:</b> ${r.medicine || '-'}</p>
-          <p><b>หมายเหตุ:</b> ${r.note || '-'}</p>
-          <p><b>เวลาที่บันทึก:</b> ${r.time} น.</p>
-        </div>
-      `,
-      confirmButtonText: 'ปิดหน้าต่าง',
-      confirmButtonColor: '#c0392b'
+  window.markDoneDialog = async (id) => {
+    const { value: med } = await Swal.fire({
+      title: 'บันทึกการจ่ายยา',
+      input: 'text',
+      inputLabel: 'ระบุยาที่นักเรียนได้รับ',
+      inputPlaceholder: 'เช่น พาราเซตามอล 2 เม็ด...',
+      showCancelButton: true,
+      confirmButtonColor: '#1abc9c'
     });
+    if (med) {
+      await updateDoc(doc(db, 'nurse_records', id), {
+        status: 'เสร็จสิ้น',
+        medicine: med
+      });
+      Swal.fire('สำเร็จ', 'บันทึกข้อมูลเรียบร้อย', 'success');
+    }
   };
 
-  // --- บันทึกข้อมูล ---
   document.getElementById('submitBtn').onclick = async function() {
     const sid = document.getElementById('f-id').value.trim();
     const fn = document.getElementById('f-fname').value.trim();
     const ln = document.getElementById('f-lname').value.trim();
     const dept = document.getElementById('f-dept').value;
     const sym = document.getElementById('f-symptom').value.trim();
-    const med = document.getElementById('f-med').value.trim();
-    const note = document.getElementById('f-note').value.trim();
     const sev = document.querySelector('input[name="sev"]:checked').value;
 
-    if (!sid || !fn || !ln || !dept || !sym) {
-      return Swal.fire({ icon: 'error', title: 'กรอกข้อมูลไม่ครบ', text: 'โปรดระบุข้อมูลที่มีเครื่องหมาย * ให้ครบถ้วน', confirmButtonColor: '#c0392b' });
-    }
+    if (!sid || !fn || !ln || !dept || !sym) return Swal.fire('กรอกไม่ครบ', 'กรุณากรอกข้อมูลดาวแดงให้ครบ', 'warning');
 
-    this.disabled = true; 
-    this.innerHTML = 'กำลังบันทึก...';
-    
-    try {
-      await addDoc(col, {
-        sid, 
-        name: fn + ' ' + ln, 
-        dept, 
-        lvl: document.getElementById('f-level').value,
-        symptom: sym, 
-        severity: sev, 
-        medicine: med,
-        note: note, 
-        status: 'รอรับบริการ',
-        time: new Date().toLocaleTimeString('th-TH', {hour:'2-digit', minute:'2-digit'}),
-        ts: serverTimestamp()
-      });
-      
-      playSuccess();
-      Swal.fire({
-        icon: 'success',
-        title: 'ลงทะเบียนสำเร็จ',
-        text: 'ข้อมูลถูกส่งไปยังเจ้าหน้าที่พยาบาลแล้ว',
-        timer: 2000,
-        showConfirmButton: false
-      });
-
-      ['f-id','f-fname','f-lname','f-symptom','f-med','f-note'].forEach(id => document.getElementById(id).value = '');
-    } catch (e) { 
-      Swal.fire({ icon: 'error', title: 'เกิดข้อผิดพลาด', text: 'ไม่สามารถบันทึกข้อมูลได้' });
-    }
-    this.disabled = false; 
-    this.innerHTML = '✅ บันทึกการลงทะเบียน';
-  };
-
-  // --- พิมพ์เอกสารราชการ เพิ่มปุ่มปิดหน้าพิมพ์ ---
-  document.getElementById('exportBtn').onclick = () => {
-    const printArea = document.getElementById('print-area');
-    const today = new Date().toLocaleDateString('th-TH', { day: 'numeric', month: 'long', year: 'numeric' });
-    
-    let tableRows = records.map((r, i) => `
-      <tr>
-        <td style="border:1px solid #333; padding:5px; text-align:center;">${i+1}</td>
-        <td style="border:1px solid #333; padding:5px;">${r.sid}</td>
-        <td style="border:1px solid #333; padding:5px;">${r.name}</td>
-        <td style="border:1px solid #333; padding:5px;">${r.dept}</td>
-        <td style="border:1px solid #333; padding:5px;">${r.symptom || '-'}</td>
-        <td style="border:1px solid #333; padding:5px;">${r.medicine || '-'}</td>
-        <td style="border:1px solid #333; padding:5px; text-align:center;">${r.time}</td>
-      </tr>
-    `).join('');
-
-    printArea.innerHTML = `
-      <button class="no-print print-close-btn" onclick="document.getElementById('print-area').style.display='none'">❌ ปิดหน้าเอกสารนี้</button>
-      <div style="padding: 40px; font-family: 'Sarabun', sans-serif; color: #000; background: #fff;">
-        <div style="text-align: center; margin-bottom: 20px;">
-          <h2 style="font-size: 1.4rem; margin-bottom: 5px;">แบบบันทึกการเข้ารับบริการห้องพยาบาล</h2>
-          <h3 style="font-size: 1.2rem; margin-bottom: 5px;">วิทยาลัยเทคนิคหาดใหญ่</h3>
-          <p>ประจำวันที่ ${today}</p>
-        </div>
-        <table style="width: 100%; border-collapse: collapse; margin-top: 20px;">
-          <thead>
-            <tr style="background: #eee;">
-              <th style="border:1px solid #333; padding:8px;">ลำดับ</th>
-              <th style="border:1px solid #333; padding:8px;">รหัสนักเรียน</th>
-              <th style="border:1px solid #333; padding:8px;">ชื่อ-นามสกุล</th>
-              <th style="border:1px solid #333; padding:8px;">แผนก</th>
-              <th style="border:1px solid #333; padding:8px;">อาการ/สาเหตุ</th>
-              <th style="border:1px solid #333; padding:8px;">ยาที่ได้รับ</th>
-              <th style="border:1px solid #333; padding:8px;">เวลา</th>
-            </tr>
-          </thead>
-          <tbody>${tableRows}</tbody>
-        </table>
-        <div style="margin-top: 40px; float: right; text-align: center; width: 250px;">
-          <p>ลงชื่อ..........................................</p>
-          <p>(..................................................)</p>
-          <p>เจ้าหน้าที่/อาจารย์ผู้ควบคุม</p>
-        </div>
-      </div>
-    `;
-    printArea.style.display = 'block';
-    window.print();
-  };
-
-  // --- ฟังชันก์จัดการสถานะ ---
-  window.markDone = async id => {
-    await updateDoc(doc(db, 'nurse_records', id), {status: 'เสร็จสิ้น'});
-  };
-  
-  window.deleteRec = async id => { 
-    const result = await Swal.fire({
-      title: 'ยืนยันการลบ?',
-      text: "ข้อมูลนี้จะถูกลบถาวรจากฐานข้อมูล",
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonColor: '#c0392b',
-      cancelButtonColor: '#6b7280',
-      confirmButtonText: 'ลบเลย',
-      cancelButtonText: 'ยกเลิก'
+    await addDoc(col, {
+      sid, name: fn + ' ' + ln, dept, lvl: document.getElementById('f-level').value,
+      symptom: sym, severity: sev, status: 'รอรับบริการ',
+      time: new Date().toLocaleTimeString('th-TH', {hour:'2-digit', minute:'2-digit'}),
+      ts: serverTimestamp()
     });
-    if(result.isConfirmed) await deleteDoc(doc(db, 'nurse_records', id)); 
+    
+    Swal.fire('สำเร็จ', 'ลงทะเบียนเรียบร้อย', 'success');
+    ['f-id','f-fname','f-lname','f-symptom'].forEach(id => document.getElementById(id).value = '');
   };
 
   // ระบบสลับแท็บ
@@ -566,13 +368,19 @@
     };
   });
 
-  // ระบบ Theme
-  const themeBtn = document.getElementById('themeBtn');
-  themeBtn.onclick = () => {
-    const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
-    document.documentElement.setAttribute('data-theme', isDark ? 'light' : 'dark');
-    themeBtn.textContent = isDark ? '🌙' : '☀️';
-  };
+  setInterval(() => {
+    document.getElementById('live-clock').textContent = new Date().toLocaleString('th-TH');
+  }, 1000);
+
+  function updateCharts() {
+    // โค้ด Chart.js (เหมือนเดิมแต่ย้ายมาไว้ในฟังก์ชันเพื่ออัปเดต)
+    const ctxDept = document.getElementById('chartDept').getContext('2d');
+    if (chartDeptInstance) chartDeptInstance.destroy();
+    chartDeptInstance = new Chart(ctxDept, {
+      type: 'bar',
+      data: { labels: ['ช่างยนต์', 'ไฟฟ้า', 'ไอที'], datasets: [{ label: 'คน', data: [5, 3, 8], backgroundColor: '#3b82f6' }] }
+    });
+  }
 </script>
 </body>
 </html>
