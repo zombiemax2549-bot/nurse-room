@@ -1,554 +1,289 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>ห้องพยาบาล – วิทยาลัยเทคนิคหาดใหญ่</title>
-  <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&family=Prompt:wght@400;600;700&display=swap" rel="stylesheet"/>
-  <style>
-    :root {
-      --red:    #c0392b;
-      --red-d:  #922b21;
-      --red-l:  #f5b7b1;
-      --white:  #fdfcfb;
-      --off:    #f4f1ee;
-      --gray:   #6b7280;
-      --dark:   #1a1a2e;
-      --green:  #1abc9c;
-      --shadow: 0 4px 24px rgba(192,57,43,0.12);
-    }
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: 'Sarabun', sans-serif; background: var(--off); min-height: 100vh; color: var(--dark); }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NOXAME - System Portal</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Sarabun:wght@300;400;600&display=swap" rel="stylesheet">
+    
+    <style>
+        /* รีเซ็ต CSS พื้นฐาน */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Sarabun', sans-serif;
+        }
 
-    header {
-      background: linear-gradient(135deg, var(--red-d) 0%, var(--red) 60%, #e74c3c 100%);
-      color: #fff; padding: 18px 32px;
-      display: flex; align-items: center; gap: 18px;
-      box-shadow: 0 3px 16px rgba(0,0,0,0.25);
-      position: sticky; top: 0; z-index: 100;
-    }
-    .logo-circle {
-      width: 56px; height: 56px;
-      background: rgba(255,255,255,0.15);
-      border: 2px solid rgba(255,255,255,0.4);
-      border-radius: 50%; display: flex; align-items: center; justify-content: center;
-      font-size: 26px; flex-shrink: 0;
-    }
-    header h1 { font-family: 'Prompt', sans-serif; font-size: 1.15rem; font-weight: 700; line-height: 1.3; }
-    header p  { font-size: 0.82rem; opacity: 0.85; margin-top: 2px; }
-    .header-right { margin-left: auto; display: flex; flex-direction: column; align-items: flex-end; gap: 6px; }
-    .header-badge { background: rgba(255,255,255,0.18); border: 1px solid rgba(255,255,255,0.35); border-radius: 20px; padding: 4px 14px; font-size: 0.78rem; }
-    .sync-status { font-size: 0.72rem; opacity: 0.9; display: flex; align-items: center; gap: 5px; }
-    .dot { width: 7px; height: 7px; border-radius: 50%; background: #aaa; }
-    .dot.online  { background: #2ecc71; animation: pulse 2s infinite; }
-    .dot.offline { background: #e74c3c; }
-    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
+        /* Responsive Body รองรับทุกขนาดหน้าจอ */
+        body {
+            background: radial-gradient(circle at center, #11131e 0%, #07080c 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            color: #ffffff;
+            overflow-x: hidden;
+            position: relative;
+        }
 
-    main {
-      max-width: 1280px; margin: 0 auto;
-      padding: 28px 24px 48px;
-      display: grid; grid-template-columns: 340px 1fr; gap: 28px; align-items: start;
-    }
+        /* แสงนีออนฟุ้งๆ ด้านหลัง (Glow Effects) */
+        body::before, body::after {
+            content: '';
+            position: absolute;
+            width: 300px;
+            height: 300px;
+            border-radius: 50%;
+            filter: blur(90px);
+            pointer-events: none;
+            z-index: 0;
+        }
+        body::before {
+            background: rgba(0, 242, 254, 0.12);
+            top: 15%;
+            left: 15%;
+        }
+        body::after {
+            background: rgba(157, 0, 255, 0.12);
+            bottom: 15%;
+            right: 15%;
+        }
 
-    .card { background: #fff; border-radius: 16px; box-shadow: var(--shadow); overflow: hidden; }
-    .card-header {
-      background: linear-gradient(135deg, var(--red) 0%, var(--red-d) 100%);
-      color: #fff; padding: 16px 22px;
-      font-family: 'Prompt', sans-serif; font-size: 0.95rem; font-weight: 600;
-      display: flex; align-items: center; gap: 10px;
-    }
-    .card-body { padding: 22px; }
+        /* Container สไตล์ Glassmorphism (กระจกโปร่งแสงล้ำๆ) */
+        .main-card {
+            background: rgba(255, 255, 255, 0.02);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 24px;
+            padding: 45px 35px;
+            width: 100%;
+            max-width: 460px;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5),
+                        inset 0 1px 1px rgba(255, 255, 255, 0.1);
+            text-align: center;
+            z-index: 1;
+            transition: all 0.3s ease;
+        }
 
-    .form-group { margin-bottom: 16px; }
-    label { display: block; font-size: 0.83rem; font-weight: 600; color: #374151; margin-bottom: 5px; }
-    label .req { color: var(--red); }
-    input, select, textarea {
-      width: 100%; padding: 10px 13px;
-      border: 1.5px solid #e5e7eb; border-radius: 8px;
-      font-family: 'Sarabun', sans-serif; font-size: 0.9rem;
-      color: var(--dark); background: #fafafa;
-      transition: border-color 0.2s, box-shadow 0.2s; outline: none;
-    }
-    input:focus, select:focus, textarea:focus {
-      border-color: var(--red); box-shadow: 0 0 0 3px rgba(192,57,43,0.12); background: #fff;
-    }
-    textarea { resize: vertical; min-height: 80px; }
-    .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        /* หัวข้อระบบ (Cyberpunk Vibe) */
+        .system-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2.6rem;
+            font-weight: 700;
+            letter-spacing: 4px;
+            background: linear-gradient(135deg, #00f2fe 0%, #9d00ff 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 8px;
+            filter: drop-shadow(0 2px 10px rgba(0, 242, 254, 0.2));
+        }
 
-    .severity-btn { display: none; }
-    .severity-group { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 4px; }
-    .severity-label { padding: 7px 14px; border-radius: 20px; border: 1.5px solid #d1d5db; font-size: 0.82rem; cursor: pointer; transition: all 0.2s; font-weight: 500; }
-    #sev-low:checked  ~ .severity-group .lbl-low  { background:#d1fae5; border-color:#10b981; color:#065f46; }
-    #sev-mid:checked  ~ .severity-group .lbl-mid  { background:#fef3c7; border-color:#f59e0b; color:#78350f; }
-    #sev-high:checked ~ .severity-group .lbl-high { background:#fee2e2; border-color:#ef4444; color:#991b1b; }
+        .system-subtitle {
+            font-size: 0.85rem;
+            color: #7e8c9f;
+            letter-spacing: 2px;
+            margin-bottom: 40px;
+            text-transform: uppercase;
+        }
 
-    .btn-submit {
-      width: 100%; padding: 13px;
-      background: linear-gradient(135deg, var(--red) 0%, var(--red-d) 100%);
-      color: #fff; border: none; border-radius: 10px;
-      font-family: 'Prompt', sans-serif; font-size: 1rem; font-weight: 600;
-      cursor: pointer; transition: opacity 0.2s, transform 0.15s; margin-top: 6px;
-      display: flex; align-items: center; justify-content: center; gap: 8px;
-    }
-    .btn-submit:hover { opacity: 0.9; transform: translateY(-1px); }
-    .btn-submit:disabled { opacity: 0.55; cursor: not-allowed; transform: none; }
+        /* Form Control */
+        .form-group {
+            position: relative;
+            margin-bottom: 25px;
+            text-align: left;
+        }
 
-    .stats-row { display: grid; grid-template-columns: repeat(3,1fr); gap: 12px; margin-bottom: 20px; }
-    .stat-box { background: #fff; border-radius: 12px; padding: 14px 16px; box-shadow: var(--shadow); display: flex; align-items: center; gap: 12px; }
-    .stat-icon { font-size: 1.8rem; }
-    .stat-val { font-family: 'Prompt', sans-serif; font-size: 1.5rem; font-weight: 700; line-height: 1; }
-    .stat-lbl { font-size: 0.73rem; color: var(--gray); margin-top: 2px; }
-    .stat-box.red .stat-val   { color: var(--red); }
-    .stat-box.green .stat-val { color: var(--green); }
-    .stat-box.blue .stat-val  { color: #3b82f6; }
+        .form-group label {
+            display: block;
+            font-size: 0.85rem;
+            color: #00f2fe;
+            margin-bottom: 10px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
 
-    .table-toolbar { display: flex; align-items: center; gap: 10px; padding: 14px 18px; border-bottom: 1px solid #f0ece9; flex-wrap: wrap; }
-    .search-box { flex: 1; min-width: 180px; padding: 8px 13px; border: 1.5px solid #e5e7eb; border-radius: 8px; font-family: 'Sarabun', sans-serif; font-size: 0.88rem; outline: none; }
-    .search-box:focus { border-color: var(--red); }
-    .filter-select { padding: 8px 12px; border: 1.5px solid #e5e7eb; border-radius: 8px; font-family: 'Sarabun', sans-serif; font-size: 0.88rem; cursor: pointer; background: #fafafa; outline: none; }
-    .btn-export { padding: 8px 16px; background: var(--green); color: #fff; border: none; border-radius: 8px; font-family: 'Sarabun', sans-serif; font-size: 0.85rem; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 5px; white-space: nowrap; transition: opacity 0.2s; }
-    .btn-export:hover { opacity: 0.85; }
+        /* ช่องกรอกข้อมูลเน้นพิมพ์ง่ายบนมือถือ */
+        .input-ctrl {
+            width: 100%;
+            padding: 16px 20px;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 14px;
+            color: #ffffff;
+            font-size: 1.2rem;
+            font-family: 'Orbitron', sans-serif;
+            letter-spacing: 3px;
+            transition: all 0.25s ease;
+        }
 
-    table { width: 100%; border-collapse: collapse; }
-    thead { background: #fdf2f2; }
-    thead th { padding: 11px 14px; text-align: left; font-size: 0.78rem; font-weight: 700; color: var(--red-d); text-transform: uppercase; letter-spacing: 0.05em; border-bottom: 2px solid #f5d0cd; white-space: nowrap; }
-    tbody tr { border-bottom: 1px solid #f3f4f6; transition: background 0.15s; }
-    tbody tr:hover { background: #fef9f9; }
-    tbody td { padding: 11px 14px; font-size: 0.875rem; vertical-align: middle; }
+        .input-ctrl:focus {
+            outline: none;
+            border-color: #00f2fe;
+            background: rgba(0, 0, 0, 0.5);
+            box-shadow: 0 0 15px rgba(0, 242, 254, 0.25);
+        }
 
-    .badge { display: inline-block; padding: 3px 10px; border-radius: 12px; font-size: 0.72rem; font-weight: 600; }
-    .badge-low  { background:#d1fae5; color:#065f46; }
-    .badge-mid  { background:#fef3c7; color:#78350f; }
-    .badge-high { background:#fee2e2; color:#991b1b; }
-    .badge-done { background:#e0f2fe; color:#0369a1; }
-    .badge-wait { background:#f3f4f6; color:#4b5563; }
+        /* ส่วนแสดงสถานะตัวเลขด้านล่างกล่องอินพุต */
+        .input-status {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 8px;
+            font-size: 0.8rem;
+        }
 
-    .action-btn { padding: 4px 10px; border-radius: 6px; border: 1.5px solid #e5e7eb; background: #fff; font-size: 0.78rem; cursor: pointer; font-family: 'Sarabun', sans-serif; transition: all 0.15s; margin-right: 4px; }
-    .action-btn:hover { border-color: var(--red); color: var(--red); }
-    .action-btn.del:hover { border-color: #ef4444; color: #ef4444; }
+        .error-text {
+            color: #ff4a6b;
+            font-weight: 500;
+            display: none; /* ซ่อนไว้ก่อน จะแสดงเมื่อกรอกไม่ครบ */
+        }
 
-    .empty-row td { text-align: center; padding: 40px; color: var(--gray); font-size: 0.9rem; }
+        .counter-text {
+            color: #64748b;
+            margin-left: auto;
+            font-family: 'Orbitron', sans-serif;
+        }
 
-    .spinner { display: inline-block; width: 16px; height: 16px; border: 2px solid rgba(255,255,255,0.35); border-top-color: #fff; border-radius: 50%; animation: spin 0.7s linear infinite; }
-    @keyframes spin { to { transform: rotate(360deg); } }
+        /* ปุ่มกดดีไซน์ลื่นไหล */
+        .btn-action {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, #00f2fe 0%, #4facfe 100%);
+            border: none;
+            border-radius: 14px;
+            color: #060814;
+            font-size: 1.1rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+            cursor: pointer;
+            box-shadow: 0 4px 20px rgba(0, 242, 254, 0.25);
+            transition: all 0.25s ease;
+            margin-top: 10px;
+        }
 
-    #toast {
-      position: fixed; bottom: 28px; right: 28px;
-      color: #fff; padding: 12px 20px; border-radius: 10px;
-      font-size: 0.88rem; box-shadow: 0 8px 24px rgba(0,0,0,0.25);
-      transform: translateY(80px); opacity: 0;
-      transition: all 0.35s ease; z-index: 999;
-    }
-    #toast.show { transform: translateY(0); opacity: 1; }
+        .btn-action:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 25px rgba(0, 242, 254, 0.45);
+            filter: brightness(1.1);
+        }
 
-    .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.45); z-index: 200; align-items: center; justify-content: center; }
-    .modal-overlay.open { display: flex; }
-    .modal { background: #fff; border-radius: 16px; padding: 28px 32px; max-width: 420px; width: 90%; box-shadow: 0 20px 60px rgba(0,0,0,0.3); animation: pop .25s ease; }
-    @keyframes pop { from{transform:scale(0.9);opacity:0}to{transform:scale(1);opacity:1} }
-    .modal h3 { font-family:'Prompt',sans-serif; font-size:1.05rem; color:var(--red-d); margin-bottom:14px; }
-    .modal .detail-row { display:flex; gap:8px; margin-bottom:8px; font-size:0.88rem; }
-    .modal .detail-row b { min-width:110px; color:var(--gray); font-weight:600; }
-    .modal-actions { margin-top:20px; display:flex; gap:10px; justify-content:flex-end; }
-    .btn-close-modal { padding: 8px 18px; background: var(--off); border: 1.5px solid #d1d5db; border-radius: 8px; cursor: pointer; font-family:'Sarabun',sans-serif; font-size:0.88rem; }
+        .btn-action:active {
+            transform: translateY(1px);
+        }
 
-    #live-clock { font-family:'Prompt',sans-serif; font-size:0.78rem; color:rgba(255,255,255,0.75); margin-top:2px; }
+        /* ==========================================
+           MOBILE MODE (ปรับแต่งการแสดงผลบนโทรศัพท์มือถือ)
+           ========================================== */
+        @media (max-width: 480px) {
+            body {
+                padding: 15px;
+                align-items: flex-start;
+                padding-top: 60px; /* เว้นระยะด้านบนให้ดูไม่ติดขอบเกินไป */
+            }
 
-    @media (max-width: 900px) { main { grid-template-columns: 1fr; } }
-    @media (max-width: 540px) { header { padding: 12px 16px; } main { padding: 16px 12px 40px; } .stats-row { grid-template-columns: 1fr 1fr; } }
-  </style>
+            .main-card {
+                padding: 35px 20px;
+                border-radius: 20px;
+            }
+
+            .system-title {
+                font-size: 2.1rem;
+                letter-spacing: 2px;
+            }
+
+            .input-ctrl {
+                padding: 14px 16px;
+                font-size: 1.1rem;
+            }
+
+            .btn-action {
+                padding: 15px;
+                font-size: 1rem;
+            }
+        }
+    </style>
 </head>
 <body>
 
-<header>
-  <div class="logo-circle">🏥</div>
-  <div>
-    <h1>ห้องพยาบาล – วิทยาลัยเทคนิคหาดใหญ่</h1>
-    <p>ระบบลงทะเบียนนักเรียนเข้ารับบริการ</p>
-    <div id="live-clock"></div>
-  </div>
-  <div class="header-right">
-    <div class="header-badge">📋 ปีการศึกษา 2567</div>
-    <div class="sync-status">
-      <div class="dot" id="syncDot"></div>
-      <span id="syncText">กำลังเชื่อมต่อ Firebase...</span>
-    </div>
-  </div>
-</header>
+    <div class="main-card">
+        <div class="system-title">NOXAME</div>
+        <div class="system-subtitle">Data Verification Portal</div>
 
-<main>
-  <div>
-    <div class="card">
-      <div class="card-header"><span>📝</span> ลงทะเบียนเข้ารับบริการ</div>
-      <div class="card-body">
-        <div class="form-group">
-          <label>เลขประจำตัวนักเรียน <span class="req">*</span></label>
-          <input type="text" id="f-id" placeholder="เช่น 66010001" maxlength="10"/>
-        </div>
-        <div class="row2">
-          <div class="form-group">
-            <label>ชื่อ <span class="req">*</span></label>
-            <input type="text" id="f-fname" placeholder="ชื่อ"/>
-          </div>
-          <div class="form-group">
-            <label>นามสกุล <span class="req">*</span></label>
-            <input type="text" id="f-lname" placeholder="นามสกุล"/>
-          </div>
-        </div>
-        <div class="row2">
-          <div class="form-group">
-            <label>แผนก / สาขา <span class="req">*</span></label>
-            <select id="f-dept">
-              <option value="">-- เลือกแผนก --</option>
-              <option>ช่างยนต์</option><option>ช่างไฟฟ้า</option>
-              <option>ช่างอิเล็กทรอนิกส์</option><option>ช่างกลโรงงาน</option>
-              <option>ช่างเชื่อมโลหะ</option><option>เทคโนโลยีสารสนเทศ</option>
-              <option>การบัญชี</option><option>การตลาด</option>
-              <option>คอมพิวเตอร์ธุรกิจ</option><option>ช่างก่อสร้าง</option>
-            </select>
-          </div>
-          <div class="form-group">
-            <label>ระดับชั้น</label>
-            <select id="f-level">
-              <option value="">-- เลือก --</option>
-              <option>ปวช.1</option><option>ปวช.2</option><option>ปวช.3</option>
-              <option>ปวส.1</option><option>ปวส.2</option>
-            </select>
-          </div>
-        </div>
-        <div class="form-group">
-          <label>อาการ / เหตุผลที่มา <span class="req">*</span></label>
-          <textarea id="f-symptom" placeholder="ระบุอาการเบื้องต้น เช่น ปวดหัว มีไข้ ปวดท้อง บาดเจ็บ..."></textarea>
-        </div>
-        <div class="form-group">
-          <label>ระดับความเร่งด่วน</label>
-          <input type="radio" name="sev" id="sev-low"  class="severity-btn" value="ไม่เร่งด่วน" checked/>
-          <input type="radio" name="sev" id="sev-mid"  class="severity-btn" value="ปานกลาง"/>
-          <input type="radio" name="sev" id="sev-high" class="severity-btn" value="เร่งด่วน"/>
-          <div class="severity-group">
-            <label for="sev-low"  class="severity-label lbl-low" >🟢 ไม่เร่งด่วน</label>
-            <label for="sev-mid"  class="severity-label lbl-mid" >🟡 ปานกลาง</label>
-            <label for="sev-high" class="severity-label lbl-high">🔴 เร่งด่วน</label>
-          </div>
-        </div>
-        <div class="form-group">
-          <label>ยาที่ได้รับ / การรักษาเบื้องต้น</label>
-          <input type="text" id="f-med" placeholder="เช่น พาราเซตามอล 500 mg, ยาแก้ไอ..."/>
-        </div>
-        <div class="form-group">
-          <label>หมายเหตุ</label>
-          <input type="text" id="f-note" placeholder="ข้อมูลเพิ่มเติม (ถ้ามี)"/>
-        </div>
-        <button class="btn-submit" id="submitBtn">
-          ✅ บันทึกการลงทะเบียน
-        </button>
-      </div>
-    </div>
-  </div>
+        <form id="noxameForm" onsubmit="handleFormSubmit(event)">
+            <div class="form-group">
+                <label for="studentId">เลขประจำตัวนักเรียน</label>
+                <input 
+                    type="text" 
+                    id="studentId" 
+                    class="input-ctrl" 
+                    placeholder="XXXXXXXXXXX"
+                    inputmode="numeric" 
+                    pattern="[0-9]{11}" 
+                    maxlength="11" 
+                    autocomplete="off"
+                    oninput="validateAndCount(this)"
+                    required
+                >
+                <div class="input-status">
+                    <span id="errorAlert" class="error-text">❌ จำเป็นต้องกรอกให้ครบ 11 หลัก</span>
+                    <span id="digitCounter" class="counter-text">0/11</span>
+                </div>
+            </div>
 
-  <div>
-    <div class="stats-row">
-      <div class="stat-box red">
-        <div class="stat-icon">👤</div>
-        <div><div class="stat-val" id="s-total">–</div><div class="stat-lbl">ทั้งหมดวันนี้</div></div>
-      </div>
-      <div class="stat-box blue">
-        <div class="stat-icon">⏳</div>
-        <div><div class="stat-val" id="s-wait">–</div><div class="stat-lbl">รอรับบริการ</div></div>
-      </div>
-      <div class="stat-box green">
-        <div class="stat-icon">✅</div>
-        <div><div class="stat-val" id="s-done">–</div><div class="stat-lbl">เสร็จสิ้น</div></div>
-      </div>
+            <button type="submit" class="btn-action">VERIFY DATA</button>
+        </form>
     </div>
 
-    <div class="card">
-      <div class="card-header">
-        <span>📋</span> รายชื่อนักเรียนเข้ารับบริการ
-        <span style="margin-left:auto;font-size:0.75rem;opacity:0.85;">🔴 Live Real-time</span>
-      </div>
-      <div class="table-toolbar">
-        <input class="search-box" id="searchBox" placeholder="🔍 ค้นหาชื่อ / รหัสนักเรียน..."/>
-        <select class="filter-select" id="filterDept">
-          <option value="">ทุกแผนก</option>
-          <option>ช่างยนต์</option><option>ช่างไฟฟ้า</option>
-          <option>ช่างอิเล็กทรอนิกส์</option><option>ช่างกลโรงงาน</option>
-          <option>ช่างเชื่อมโลหะ</option><option>เทคโนโลยีสารสนเทศ</option>
-          <option>การบัญชี</option><option>การตลาด</option>
-          <option>คอมพิวเตอร์ธุรกิจ</option><option>ช่างก่อสร้าง</option>
-        </select>
-        <select class="filter-select" id="filterStatus">
-          <option value="">ทุกสถานะ</option>
-          <option value="รอรับบริการ">รอรับบริการ</option>
-          <option value="เสร็จสิ้น">เสร็จสิ้น</option>
-        </select>
-        <button class="btn-export">📥 Export CSV</button>
-      </div>
-      <div style="overflow-x:auto;">
-        <table>
-          <thead>
-            <tr>
-              <th>#</th><th>รหัส</th><th>ชื่อ–นามสกุล</th><th>แผนก</th>
-              <th>ชั้น</th><th>อาการ</th><th>ความเร่งด่วน</th>
-              <th>เวลา</th><th>สถานะ</th><th>จัดการ</th>
-            </tr>
-          </thead>
-          <tbody id="tableBody">
-            <tr class="empty-row"><td colspan="10">⏳ กำลังเชื่อมต่อ Firebase...</td></tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
-  </div>
-</main>
+    <script>
+        // ฟังก์ชันควบคุมการพิมพ์: บังคับเฉพาะเลข 0-9 และคอยนับจำนวนตัวอักษร
+        function validateAndCount(input) {
+            // ดักจับและลบตัวอักษรหรือสัญลักษณ์ที่ไม่ใช่ตัวเลขออกทันที
+            let cleanValue = input.value.replace(/[^0-9]/g, '');
+            input.value = cleanValue;
 
-<div class="modal-overlay" id="detailModal" onclick="closeModal(event)">
-  <div class="modal">
-    <h3>📋 รายละเอียดการลงทะเบียน</h3>
-    <div id="modalContent"></div>
-    <div class="modal-actions">
-      <button class="btn-close-modal" onclick="closeModalDirect()">ปิด</button>
-    </div>
-  </div>
-</div>
+            // อัปเดตตัวเลขบอกสถานะฝั่งขวา (เช่น 5/11)
+            const counter = document.getElementById('digitCounter');
+            counter.innerText = `${cleanValue.length}/11`;
 
-<div id="toast"></div>
+            // จัดการสีและสถานะเตือนภัยแบบ Real-time
+            const errorAlert = document.getElementById('errorAlert');
+            if (cleanValue.length === 11) {
+                errorAlert.style.display = 'none';
+                counter.style.color = '#00f2fe';
+                input.style.borderColor = 'rgba(255, 255, 255, 0.1)';
+            } else {
+                counter.style.color = '#64748b';
+            }
+        }
 
-<script type="module">
-  import { initializeApp }    from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-  import {
-    getFirestore, collection, addDoc, onSnapshot,
-    updateDoc, deleteDoc, doc, query, serverTimestamp
-  } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+        // ฟังก์ชันเมื่อกดปุ่มยืนยัน (Submit)
+        function handleFormSubmit(event) {
+            event.preventDefault(); // ป้องกันการ reload หน้าจอเบื้องต้น
+            
+            const studentIdInput = document.getElementById('studentId');
+            const errorAlert = document.getElementById('errorAlert');
 
-  // ---- Firebase init ----
-  const app = initializeApp({
-    apiKey:            "AIzaSyCl0DcZ-q6OIAw2KV58eVN-92Wad9FIVA4",
-    authDomain:        "llll-a2748.firebaseapp.com",
-    projectId:         "llll-a2748",
-    storageBucket:     "llll-a2748.firebasestorage.app",
-    messagingSenderId: "692276230272",
-    appId:             "1:692276230272:web:f533c0e85762c630f90e65"
-  });
-  const db  = getFirestore(app);
-  const col = collection(db, "nurse_records");
+            // ตรวจสอบขั้นสุดท้ายว่าครบ 11 หลักจริงไหม
+            if (studentIdInput.value.length !== 11) {
+                errorAlert.style.display = 'block';
+                studentIdInput.style.borderColor = '#ff4a6b';
+                studentIdInput.focus();
+                return false;
+            }
 
-  // ---- clock ----
-  function tick() {
-    document.getElementById('live-clock').textContent =
-      new Date().toLocaleDateString('th-TH', {
-        weekday:'long', year:'numeric', month:'long',
-        day:'numeric', hour:'2-digit', minute:'2-digit', second:'2-digit'
-      });
-  }
-  tick(); setInterval(tick, 1000);
+            // --- วาง LOGIC เดิมของคุณต่อตรงนี้ได้เลยครับ ---
+            // ตัวอย่างเช่นการดึงข้อมูล หรือการเปลี่ยนหน้าเว็บไปหน้าแสดงผล:
+            alert('กำลังประมวลผลเลขประจำตัว: ' + studentIdInput.value);
+            
+            // ตัวอย่างเปลี่ยนหน้าไปไฟล์อื่น:
+            // window.location.href = "dashboard.html?id=" + studentIdInput.value;
+        }
+    </script>
 
-  // ---- state ----
-  let records = [];
-  let connected = false;
-
-  // แสดง error ถ้าเชื่อมต่อไม่ได้ใน 8 วินาที
-  const connTimeout = setTimeout(() => {
-    if (!connected) {
-      setSync(false);
-      document.getElementById('tableBody').innerHTML =
-        `<tr class="empty-row"><td colspan="10">❌ เชื่อมต่อ Firebase ไม่ได้ — กรุณาตรวจสอบ Rules และ Internet</td></tr>`;
-      toast('⚠️ ไม่สามารถเชื่อมต่อ Firebase ได้ ตรวจสอบ Rules ใน Firebase Console', '#922b21');
-    }
-  }, 8000);
-
-  // ---- real-time listener ----
-  onSnapshot(
-    query(col),
-    (snap) => {
-      connected = true;
-      clearTimeout(connTimeout);
-      records = snap.docs
-        .map(d => ({ firestoreId: d.id, ...d.data() }))
-        .sort((a, b) => {
-          const ta = a.ts?.toMillis?.() ?? 0;
-          const tb = b.ts?.toMillis?.() ?? 0;
-          return tb - ta;
-        });
-      renderTable();
-      setSync(true);
-    },
-    (err) => {
-      connected = true; // stop timeout
-      clearTimeout(connTimeout);
-      console.error('Firebase error:', err);
-      setSync(false);
-      document.getElementById('tableBody').innerHTML =
-        `<tr class="empty-row"><td colspan="10">❌ Firebase ปฏิเสธการเชื่อมต่อ: กรุณาตั้ง Rules ให้ allow read, write: if true</td></tr>`;
-      toast('⚠️ Firebase: ' + err.message, '#922b21');
-    }
-  );
-
-  function setSync(ok) {
-    document.getElementById('syncDot').className  = 'dot ' + (ok ? 'online' : 'offline');
-    document.getElementById('syncText').textContent = ok
-      ? '🔥 เชื่อมต่อ Firebase – Real-time'
-      : '❌ ออฟไลน์';
-  }
-
-  // ---- submit ----
-  window.submitForm = async function() {
-    const sid  = document.getElementById('f-id').value.trim();
-    const fn   = document.getElementById('f-fname').value.trim();
-    const ln   = document.getElementById('f-lname').value.trim();
-    const dept = document.getElementById('f-dept').value;
-    const lvl  = document.getElementById('f-level').value;
-    const sym  = document.getElementById('f-symptom').value.trim();
-    const med  = document.getElementById('f-med').value.trim();
-    const note = document.getElementById('f-note').value.trim();
-    const sev  = document.querySelector('input[name="sev"]:checked').value;
-
-    if (!sid || !fn || !ln || !dept || !sym) {
-      toast('กรุณากรอกข้อมูลที่จำเป็นให้ครบ', '#922b21'); return;
-    }
-
-    const btn = document.getElementById('submitBtn');
-    btn.disabled = true;
-    btn.innerHTML = '<div class="spinner"></div> กำลังบันทึก...';
-
-    try {
-      await addDoc(col, {
-        sid, name: fn + ' ' + ln, dept, lvl,
-        symptom: sym, severity: sev, medicine: med, note,
-        time: new Date().toLocaleTimeString('th-TH', { hour:'2-digit', minute:'2-digit' }),
-        status: 'รอรับบริการ',
-        ts: serverTimestamp()
-      });
-      toast('✅ บันทึกสำเร็จ – ' + fn + ' ' + ln, '#0f6e56');
-      clearForm();
-    } catch(e) {
-      toast('❌ เกิดข้อผิดพลาด: ' + e.message, '#922b21');
-    }
-
-    btn.disabled = false;
-    btn.innerHTML = '✅ บันทึกการลงทะเบียน';
-  };
-
-  function clearForm() {
-    ['f-id','f-fname','f-lname','f-symptom','f-med','f-note']
-      .forEach(id => document.getElementById(id).value = '');
-    document.getElementById('f-dept').value  = '';
-    document.getElementById('f-level').value = '';
-    document.getElementById('sev-low').checked = true;
-  }
-
-  // ---- actions ----
-  window.markDone = async function(fid) {
-    try {
-      await updateDoc(doc(db, 'nurse_records', fid), { status: 'เสร็จสิ้น' });
-      toast('✅ อัปเดตสถานะเป็น "เสร็จสิ้น" แล้ว', '#0f6e56');
-    } catch(e) { toast('❌ ' + e.message, '#922b21'); }
-  };
-
-  window.deleteRec = async function(fid) {
-    if (!confirm('ต้องการลบรายการนี้?')) return;
-    try {
-      await deleteDoc(doc(db, 'nurse_records', fid));
-      toast('🗑 ลบรายการเรียบร้อย', '#374151');
-    } catch(e) { toast('❌ ' + e.message, '#922b21'); }
-  };
-
-  window.showDetail = function(fid) {
-    const r = records.find(x => x.firestoreId === fid);
-    if (!r) return;
-    document.getElementById('modalContent').innerHTML = `
-      <div class="detail-row"><b>รหัสนักเรียน</b><span>${r.sid}</span></div>
-      <div class="detail-row"><b>ชื่อ–นามสกุล</b><span>${r.name}</span></div>
-      <div class="detail-row"><b>แผนก / ชั้น</b><span>${r.dept} ${r.lvl||''}</span></div>
-      <div class="detail-row"><b>อาการ</b><span>${r.symptom}</span></div>
-      <div class="detail-row"><b>ความเร่งด่วน</b><span>${r.severity}</span></div>
-      <div class="detail-row"><b>ยาที่ได้รับ</b><span>${r.medicine||'–'}</span></div>
-      <div class="detail-row"><b>หมายเหตุ</b><span>${r.note||'–'}</span></div>
-      <div class="detail-row"><b>เวลาลงทะเบียน</b><span>${r.time}</span></div>
-      <div class="detail-row"><b>สถานะ</b><span>${r.status}</span></div>
-    `;
-    document.getElementById('detailModal').classList.add('open');
-  };
-  window.closeModal = e => {
-    if (e.target.id === 'detailModal') closeModalDirect();
-  };
-  window.closeModalDirect = () =>
-    document.getElementById('detailModal').classList.remove('open');
-
-  // ---- render ----
-  window.renderTable = function() {
-    const q    = document.getElementById('searchBox').value.toLowerCase();
-    const dept = document.getElementById('filterDept').value;
-    const stat = document.getElementById('filterStatus').value;
-
-    const filtered = records.filter(r =>
-      (!q    || r.name.toLowerCase().includes(q) || r.sid.includes(q)) &&
-      (!dept || r.dept === dept) &&
-      (!stat || r.status === stat)
-    );
-
-    document.getElementById('s-total').textContent = records.length;
-    document.getElementById('s-wait').textContent  = records.filter(r=>r.status==='รอรับบริการ').length;
-    document.getElementById('s-done').textContent  = records.filter(r=>r.status==='เสร็จสิ้น').length;
-
-    const tbody = document.getElementById('tableBody');
-    if (!filtered.length) {
-      tbody.innerHTML = `<tr class="empty-row"><td colspan="10">📭 ไม่พบรายการ</td></tr>`;
-      return;
-    }
-
-    const sc = { 'ไม่เร่งด่วน':'badge-low','ปานกลาง':'badge-mid','เร่งด่วน':'badge-high' };
-    const ss = { 'รอรับบริการ':'badge-wait','เสร็จสิ้น':'badge-done' };
-
-    tbody.innerHTML = filtered.map((r,i) => `
-      <tr>
-        <td style="color:#9ca3af;font-size:0.8rem;">${i+1}</td>
-        <td><b>${r.sid}</b></td>
-        <td>${r.name}</td>
-        <td style="font-size:0.82rem;">${r.dept}</td>
-        <td style="font-size:0.82rem;">${r.lvl||'–'}</td>
-        <td style="max-width:150px;font-size:0.82rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;" title="${r.symptom}">${r.symptom}</td>
-        <td><span class="badge ${sc[r.severity]||''}">${r.severity}</span></td>
-        <td style="font-size:0.82rem;white-space:nowrap;">${r.time}</td>
-        <td><span class="badge ${ss[r.status]||''}">${r.status}</span></td>
-        <td>
-          <button class="action-btn" onclick="showDetail('${r.firestoreId}')">🔍</button>
-          ${r.status!=='เสร็จสิ้น'
-            ? `<button class="action-btn" onclick="markDone('${r.firestoreId}')">✅</button>`:''}
-          <button class="action-btn del" onclick="deleteRec('${r.firestoreId}')">🗑</button>
-        </td>
-      </tr>`).join('');
-  };
-
-  // ---- export ----
-  window.exportCSV = function() {
-    if (!records.length) { toast('ไม่มีข้อมูลให้ Export', '#374151'); return; }
-    const h = ['#','รหัส','ชื่อ-นามสกุล','แผนก','ชั้น','อาการ','ความเร่งด่วน','ยา','หมายเหตุ','เวลา','สถานะ'];
-    const rows = records.map((r,i)=>
-      [i+1,r.sid,r.name,r.dept,r.lvl,r.symptom,r.severity,r.medicine,r.note,r.time,r.status]
-      .map(v=>`"${(v||'').replace(/"/g,'""')}"`).join(',')
-    );
-    const a = document.createElement('a');
-    a.href = 'data:text/csv;charset=utf-8,\uFEFF' + encodeURIComponent([h.join(','),...rows].join('\n'));
-    a.download = `nurse_${new Date().toISOString().slice(0,10)}.csv`;
-    a.click();
-    toast('📥 Export CSV สำเร็จ', '#0f6e56');
-  };
-
-  // ---- bind events (module scope safe) ----
-  document.getElementById('submitBtn').addEventListener('click', submitForm);
-  document.getElementById('searchBox').addEventListener('input', renderTable);
-  document.getElementById('filterDept').addEventListener('change', renderTable);
-  document.getElementById('filterStatus').addEventListener('change', renderTable);
-  document.querySelector('.btn-export').addEventListener('click', exportCSV);
-
-  // ---- toast ----
-  function toast(msg, bg='#1a1a2e') {
-    const t = document.getElementById('toast');
-    t.textContent = msg; t.style.background = bg;
-    t.classList.add('show');
-    clearTimeout(window._tt);
-    window._tt = setTimeout(() => t.classList.remove('show'), 3200);
-  }
-</script>
 </body>
 </html>
