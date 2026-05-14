@@ -168,17 +168,28 @@
     @media (max-width:768px) { .tab-content{padding:16px 14px 48px} header{padding:12px 14px} header h1{font-size:0.95rem} .tab-nav{padding:0 14px} }
     
     /* สไตล์สำหรับการพิมพ์ (Print) */
+    #print-area { display: none; }
     @media print {
       body * { visibility: hidden; background: none !important; }
       #print-area, #print-area * { visibility: visible; }
-      #print-area { position: absolute; left: 0; top: 0; width: 100%; }
+      #print-area { display: block; position: absolute; left: 0; top: 0; width: 100%; }
       .no-print { display: none !important; }
     }
+    
+    /* สไตล์ปุ่มปิดหน้าพิมพ์ */
+    .print-close-btn {
+      position: fixed; top: 20px; right: 20px;
+      padding: 10px 20px; background: #c0392b; color: #fff;
+      border: none; border-radius: 8px; cursor: pointer;
+      font-family: 'Prompt', sans-serif; font-weight: 600;
+      z-index: 9999; box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    }
+    .print-close-btn:hover { background: #922b21; }
   </style>
 </head>
 <body>
 
-<!-- พื้นที่สำหรับจัดการงานเอกสาร (จะถูกเติมด้วย JS เมื่อสั่งพิมพ์) -->
+<!-- พื้นที่สำหรับจัดการงานเอกสาร -->
 <div id="print-area"></div>
 
 <header class="no-print">
@@ -311,7 +322,8 @@
 
   // นาฬิกา
   setInterval(() => {
-    document.getElementById('live-clock').textContent = new Date().toLocaleDateString('th-TH',{weekday:'long',year:'numeric',month:'long',day:'numeric',hour:'2-digit',minute:'2-digit',second:'2-digit'});
+    const clockEl = document.getElementById('live-clock');
+    if(clockEl) clockEl.textContent = new Date().toLocaleDateString('th-TH',{weekday:'long',year:'numeric',month:'long',day:'numeric',hour:'2-digit',minute:'2-digit',second:'2-digit'});
   }, 1000);
 
   let records = [];
@@ -345,24 +357,30 @@
     });
 
     if (chartDeptInstance) chartDeptInstance.destroy();
-    chartDeptInstance = new Chart(document.getElementById('chartDept'), {
-      type: 'bar',
-      data: {
-        labels: Object.keys(deptCounts),
-        datasets: [{ label: 'จำนวนคน', data: Object.values(deptCounts), backgroundColor: '#3b82f6' }]
-      },
-      options: { responsive: true, maintainAspectRatio: false }
-    });
+    const ctxDept = document.getElementById('chartDept');
+    if(ctxDept) {
+        chartDeptInstance = new Chart(ctxDept, {
+          type: 'bar',
+          data: {
+            labels: Object.keys(deptCounts),
+            datasets: [{ label: 'จำนวนคน', data: Object.values(deptCounts), backgroundColor: '#3b82f6' }]
+          },
+          options: { responsive: true, maintainAspectRatio: false }
+        });
+    }
 
     if (chartSevInstance) chartSevInstance.destroy();
-    chartSevInstance = new Chart(document.getElementById('chartSev'), {
-      type: 'doughnut',
-      data: {
-        labels: Object.keys(sevCounts),
-        datasets: [{ data: Object.values(sevCounts), backgroundColor: ['#1abc9c', '#f59e0b', '#c0392b'] }]
-      },
-      options: { responsive: true, maintainAspectRatio: false }
-    });
+    const ctxSev = document.getElementById('chartSev');
+    if(ctxSev) {
+        chartSevInstance = new Chart(ctxSev, {
+          type: 'doughnut',
+          data: {
+            labels: Object.keys(sevCounts),
+            datasets: [{ data: Object.values(sevCounts), backgroundColor: ['#1abc9c', '#f59e0b', '#c0392b'] }]
+          },
+          options: { responsive: true, maintainAspectRatio: false }
+        });
+    }
   }
 
   // --- ฟังก์ชัน Render ตาราง ---
@@ -396,7 +414,7 @@
   // --- ระบบค้นหา ---
   document.getElementById('searchBox').oninput = () => renderTable();
 
-  // --- ฟังก์ชันดูรายละเอียด (Modal) ---
+  // --- ฟังก์ชันดูรายละเอียด (Modal) แก้ไขให้แสดง อาการ และ ยา ให้ครบ ---
   window.viewDetail = (id) => {
     const r = records.find(rec => rec.firestoreId === id);
     if (!r) return;
@@ -427,6 +445,8 @@
     const ln = document.getElementById('f-lname').value.trim();
     const dept = document.getElementById('f-dept').value;
     const sym = document.getElementById('f-symptom').value.trim();
+    const med = document.getElementById('f-med').value.trim();
+    const note = document.getElementById('f-note').value.trim();
     const sev = document.querySelector('input[name="sev"]:checked').value;
 
     if (!sid || !fn || !ln || !dept || !sym) {
@@ -438,9 +458,15 @@
     
     try {
       await addDoc(col, {
-        sid, name: fn + ' ' + ln, dept, lvl: document.getElementById('f-level').value,
-        symptom: sym, severity: sev, medicine: document.getElementById('f-med').value,
-        note: document.getElementById('f-note').value, status: 'รอรับบริการ',
+        sid, 
+        name: fn + ' ' + ln, 
+        dept, 
+        lvl: document.getElementById('f-level').value,
+        symptom: sym, 
+        severity: sev, 
+        medicine: med,
+        note: note, 
+        status: 'รอรับบริการ',
         time: new Date().toLocaleTimeString('th-TH', {hour:'2-digit', minute:'2-digit'}),
         ts: serverTimestamp()
       });
@@ -462,7 +488,7 @@
     this.innerHTML = '✅ บันทึกการลงทะเบียน';
   };
 
-  // --- พิมพ์เอกสารราชการ ---
+  // --- พิมพ์เอกสารราชการ เพิ่มปุ่มปิดหน้าพิมพ์ ---
   document.getElementById('exportBtn').onclick = () => {
     const printArea = document.getElementById('print-area');
     const today = new Date().toLocaleDateString('th-TH', { day: 'numeric', month: 'long', year: 'numeric' });
@@ -480,7 +506,8 @@
     `).join('');
 
     printArea.innerHTML = `
-      <div style="padding: 40px; font-family: 'Sarabun', sans-serif; color: #000;">
+      <button class="no-print print-close-btn" onclick="document.getElementById('print-area').style.display='none'">❌ ปิดหน้าเอกสารนี้</button>
+      <div style="padding: 40px; font-family: 'Sarabun', sans-serif; color: #000; background: #fff;">
         <div style="text-align: center; margin-bottom: 20px;">
           <h2 style="font-size: 1.4rem; margin-bottom: 5px;">แบบบันทึกการเข้ารับบริการห้องพยาบาล</h2>
           <h3 style="font-size: 1.2rem; margin-bottom: 5px;">วิทยาลัยเทคนิคหาดใหญ่</h3>
@@ -507,6 +534,7 @@
         </div>
       </div>
     `;
+    printArea.style.display = 'block';
     window.print();
   };
 
