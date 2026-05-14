@@ -42,7 +42,6 @@
     body { 
       font-family:'Sarabun',sans-serif; 
       background: var(--bg);
-      /* 🖼️ เพิ่มรูปพื้นหลัง IMG_8809.jpeg พร้อม Overlay จางๆ */
       background-image: linear-gradient(rgba(244, 241, 238, 0.8), rgba(244, 241, 238, 0.8)), url('IMG_8809.jpeg');
       background-size: cover;
       background-position: center;
@@ -59,7 +58,6 @@
       box-shadow:0 3px 20px rgba(0,0,0,0.3);
       position:sticky; top:0; z-index:100;
     }
-    /* 🖼️ ปรับแต่งโลโก้วงกลมให้ใส่รูป IMG_8808.jpeg */
     .logo-circle { 
       width:54px; height:54px; 
       background: white; 
@@ -136,8 +134,6 @@
     .filter-select { padding:8px 11px;border:1.5px solid var(--border);border-radius:8px;font-family:'Sarabun',sans-serif;font-size:0.86rem;color:var(--text);background:var(--surface2);cursor:pointer;outline:none; }
     .btn-export { padding:8px 14px;background:var(--green);color:#fff;border:none;border-radius:8px;font-family:'Sarabun',sans-serif;font-size:0.82rem;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:5px;white-space:nowrap;transition:opacity 0.2s; }
     .btn-export:hover { opacity:0.85; }
-    .btn-sound { padding:8px 12px;background:var(--surface2);border:1.5px solid var(--border);border-radius:8px;cursor:pointer;font-size:0.82rem;font-weight:600;transition:all 0.2s;color:var(--text);font-family:'Sarabun',sans-serif; }
-    .btn-sound.on { background:#fef3c7;border-color:#f59e0b;color:#78350f; }
 
     table { width:100%;border-collapse:collapse; }
     thead { background:var(--red-l); }
@@ -159,53 +155,17 @@
     .action-btn { padding:4px 9px;border-radius:6px;border:1.5px solid var(--border);background:var(--surface);font-size:0.78rem;cursor:pointer;font-family:'Sarabun',sans-serif;transition:all 0.15s;margin-right:3px;color:var(--text); }
     .action-btn:hover { border-color:var(--red);color:var(--red); }
     .action-btn.del:hover { border-color:#ef4444;color:#ef4444; }
-    .action-btn.pbtn:hover { border-color:var(--blue);color:var(--blue); }
-
-    .empty-row td { text-align:center;padding:40px;color:var(--text2);font-size:0.9rem; }
-    .new-row { animation:hl 2.5s ease; }
-    @keyframes hl { 0%{background:rgba(192,57,43,0.18)}100%{background:transparent} }
 
     .dash-grid { display:grid;grid-template-columns:1fr 1fr;gap:20px; }
-    .chart-card { background:var(--surface);border-radius:var(--radius);box-shadow:var(--shadow2);padding:20px;transition:background var(--tr); }
+    .chart-card { background:var(--surface);border-radius:var(--radius);box-shadow:var(--shadow2);padding:20px;transition:background var(--tr); border: 1px solid var(--border); }
     .chart-title { font-family:'Prompt',sans-serif;font-size:0.9rem;font-weight:600;color:var(--text);margin-bottom:14px; }
-    .chart-wrap { position:relative;height:220px; }
-
-    .modal-overlay { display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:300;align-items:center;justify-content:center;padding:16px; }
-    .modal-overlay.open { display:flex; }
-    .modal { background:var(--surface);border-radius:18px;padding:26px 30px;max-width:440px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,0.3);animation:pop .25s ease;transition:background var(--tr); }
-    @keyframes pop { from{transform:scale(0.9);opacity:0}to{transform:scale(1);opacity:1} }
-    .modal h3 { font-family:'Prompt',sans-serif;font-size:1rem;color:var(--red-d);margin-bottom:14px; }
-    [data-theme="dark"] .modal h3 { color:#f5b7b1; }
-    .detail-row { display:flex;gap:8px;margin-bottom:8px;font-size:0.86rem;color:var(--text); }
-    .detail-row b { min-width:110px;color:var(--text2);font-weight:600; }
-    .modal-actions { margin-top:18px;display:flex;gap:8px;justify-content:flex-end; }
-    .btn-close-modal { padding:8px 16px;background:var(--surface2);border:1.5px solid var(--border);border-radius:8px;cursor:pointer;font-family:'Sarabun',sans-serif;font-size:0.86rem;color:var(--text); }
-    .btn-print-modal { padding:8px 16px;background:var(--blue);border:none;border-radius:8px;cursor:pointer;font-family:'Sarabun',sans-serif;font-size:0.86rem;color:#fff;font-weight:600; }
-
-    @media print {
-      body * { visibility:hidden; }
-      #printArea, #printArea * { visibility:visible; }
-      #printArea { position:fixed;inset:0;display:flex;align-items:center;justify-content:center; }
-    }
-    #printArea { display:none; }
-    .queue-ticket { width:280px;border:3px solid #c0392b;border-radius:14px;padding:22px 18px;text-align:center;font-family:'Prompt',sans-serif;background:#fff;color:#1a1a2e; }
-    .q-school { font-size:0.68rem;color:#666;margin-bottom:8px;line-height:1.4; }
-    .q-num { font-size:4.5rem;font-weight:800;color:#c0392b;line-height:1; }
-    .q-label { font-size:0.75rem;color:#888;margin-bottom:10px; }
-    .q-name { font-size:1rem;font-weight:700; }
-    .q-dept { font-size:0.8rem;color:#555; }
-    .q-sev { font-size:0.78rem;margin-top:8px;font-weight:700; }
-    .q-time { font-size:0.7rem;color:#888;margin-top:10px;border-top:1px dashed #ccc;padding-top:8px; }
-
-    .spinner { display:inline-block;width:16px;height:16px;border:2px solid rgba(255,255,255,0.35);border-top-color:#fff;border-radius:50%;animation:spin 0.7s linear infinite; }
-    @keyframes spin { to{transform:rotate(360deg)} }
+    .chart-wrap { position:relative;height:240px; }
 
     #toast { position:fixed;bottom:24px;right:24px;color:#fff;padding:12px 18px;border-radius:10px;font-size:0.86rem;box-shadow:0 8px 24px rgba(0,0,0,0.25);transform:translateY(80px);opacity:0;transition:all 0.35s ease;z-index:999;max-width:320px; }
     #toast.show { transform:translateY(0);opacity:1; }
 
     @media (max-width:1024px) { .stats-row{grid-template-columns:repeat(2,1fr)} .dash-grid{grid-template-columns:1fr} }
-    @media (max-width:768px) { .tab-content{padding:16px 14px 48px} header{padding:12px 14px} header h1{font-size:0.95rem} .tab-nav{padding:0 14px} .header-badge{display:none} }
-    @media (max-width:540px) { .grid2{grid-template-columns:1fr} .stats-row{grid-template-columns:1fr 1fr} }
+    @media (max-width:768px) { .tab-content{padding:16px 14px 48px} header{padding:12px 14px} header h1{font-size:0.95rem} .tab-nav{padding:0 14px} }
   </style>
 </head>
 <body>
@@ -237,10 +197,10 @@
 
 <div class="tab-content active" id="tab-register">
   <div class="stats-row">
-    <div class="stat-box red"><div class="stat-icon">👤</div><div><div class="stat-val" id="s-total">–</div><div class="stat-lbl">ทั้งหมดวันนี้</div></div></div>
-    <div class="stat-box blue"><div class="stat-icon">⏳</div><div><div class="stat-val" id="s-wait">–</div><div class="stat-lbl">รอรับบริการ</div></div></div>
-    <div class="stat-box green"><div class="stat-icon">✅</div><div><div class="stat-val" id="s-done">–</div><div class="stat-lbl">เสร็จสิ้น</div></div></div>
-    <div class="stat-box yel"><div class="stat-icon">🔴</div><div><div class="stat-val" id="s-urg">–</div><div class="stat-lbl">เร่งด่วน</div></div></div>
+    <div class="stat-box red"><div class="stat-icon">👤</div><div><div class="stat-val" id="s-total">0</div><div class="stat-lbl">ทั้งหมดวันนี้</div></div></div>
+    <div class="stat-box blue"><div class="stat-icon">⏳</div><div><div class="stat-val" id="s-wait">0</div><div class="stat-lbl">รอรับบริการ</div></div></div>
+    <div class="stat-box green"><div class="stat-icon">✅</div><div><div class="stat-val" id="s-done">0</div><div class="stat-lbl">เสร็จสิ้น</div></div></div>
+    <div class="stat-box yel"><div class="stat-icon">🔴</div><div><div class="stat-val" id="s-urg">0</div><div class="stat-lbl">เร่งด่วน</div></div></div>
   </div>
   <div class="card">
     <div class="card-header"><span>📝</span> กรอกข้อมูลการลงทะเบียน</div>
@@ -284,8 +244,6 @@
     <div class="card-header"><span>📋</span> รายชื่อนักเรียนเข้ารับบริการ</div>
     <div class="table-toolbar">
       <input class="search-box" id="searchBox" placeholder="🔍 ค้นหาชื่อ / รหัส..."/>
-      <select class="filter-select" id="filterDept"><option value="">ทุกแผนก</option></select>
-      <select class="filter-select" id="filterStatus"><option value="">ทุกสถานะ</option></select>
       <button class="btn-export" id="exportBtn">📥 CSV</button>
     </div>
     <div style="overflow-x:auto;">
@@ -304,17 +262,6 @@
   </div>
 </div>
 
-<div class="modal-overlay" id="detailModal">
-  <div class="modal">
-    <h3>📋 รายละเอียด</h3>
-    <div id="modalContent"></div>
-    <div class="modal-actions">
-      <button class="btn-close-modal" onclick="document.getElementById('detailModal').classList.remove('open')">ปิด</button>
-    </div>
-  </div>
-</div>
-
-<div id="printArea"><div class="queue-ticket" id="queueTicket"></div></div>
 <div id="toast"></div>
 
 <script type="module">
@@ -337,12 +284,14 @@
   }, 1000);
 
   let records = [];
-  let cDept, cSev;
+  let chartDeptInstance = null;
+  let chartSevInstance = null;
 
   onSnapshot(query(col), snap => {
     records = snap.docs.map(d => ({firestoreId: d.id, ...d.data()})).sort((a,b) => (b.ts?.toMillis() || 0) - (a.ts?.toMillis() || 0));
     renderTable();
     updateStats();
+    updateCharts();
     document.getElementById('syncDot').className = 'dot online';
     document.getElementById('syncText').textContent = '🔥 Real-time';
   });
@@ -354,6 +303,45 @@
     document.getElementById('s-urg').textContent = records.filter(r => r.severity === 'เร่งด่วน').length;
   }
 
+  function updateCharts() {
+    const deptCounts = {};
+    const sevCounts = { 'ไม่เร่งด่วน': 0, 'ปานกลาง': 0, 'เร่งด่วน': 0 };
+
+    records.forEach(r => {
+      deptCounts[r.dept] = (deptCounts[r.dept] || 0) + 1;
+      if (sevCounts.hasOwnProperty(r.severity)) sevCounts[r.severity]++;
+    });
+
+    // Chart Dept (Bar)
+    if (chartDeptInstance) chartDeptInstance.destroy();
+    chartDeptInstance = new Chart(document.getElementById('chartDept'), {
+      type: 'bar',
+      data: {
+        labels: Object.keys(deptCounts),
+        datasets: [{
+          label: 'จำนวนคน',
+          data: Object.values(deptCounts),
+          backgroundColor: '#3b82f6'
+        }]
+      },
+      options: { responsive: true, maintainAspectRatio: false }
+    });
+
+    // Chart Severity (Doughnut)
+    if (chartSevInstance) chartSevInstance.destroy();
+    chartSevInstance = new Chart(document.getElementById('chartSev'), {
+      type: 'doughnut',
+      data: {
+        labels: Object.keys(sevCounts),
+        datasets: [{
+          data: Object.values(sevCounts),
+          backgroundColor: ['#1abc9c', '#f59e0b', '#c0392b']
+        }]
+      },
+      options: { responsive: true, maintainAspectRatio: false }
+    });
+  }
+
   window.renderTable = function() {
     const tbody = document.getElementById('tableBody');
     tbody.innerHTML = records.map((r, i) => `
@@ -363,7 +351,7 @@
         <td>${r.name || '-'}</td>
         <td>${r.dept || '-'}</td>
         <td>${r.lvl || '-'}</td>
-        <td><span class="badge ${r.severity === 'เร่งด่วน' ? 'badge-high' : 'badge-low'}">${r.severity}</span></td>
+        <td><span class="badge ${r.severity === 'เร่งด่วน' ? 'badge-high' : r.severity === 'ปานกลาง' ? 'badge-mid' : 'badge-low'}">${r.severity}</span></td>
         <td>${r.time}</td>
         <td><span class="badge ${r.status === 'เสร็จสิ้น' ? 'badge-done' : 'badge-wait'}">${r.status}</span></td>
         <td>
@@ -415,6 +403,13 @@
       document.getElementById(btn.dataset.tab).classList.add('active');
     };
   });
+
+  const themeBtn = document.getElementById('themeBtn');
+  themeBtn.onclick = () => {
+    const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+    document.documentElement.setAttribute('data-theme', isDark ? 'light' : 'dark');
+    themeBtn.textContent = isDark ? '🌙' : '☀️';
+  };
 </script>
 </body>
 </html>
