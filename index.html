@@ -41,8 +41,8 @@
     body { 
       font-family:'Sarabun',sans-serif; 
       background: var(--bg);
-      /* จัดวางรูปภาพพื้นหลังสุด (รูปที่ 3) ตามต้องการ โดยตั้งค่าให้อ่านไฟล์ภาพสากล */
-      background-image: linear-gradient(rgba(244, 241, 238, 0.85), rgba(244, 241, 238, 0.85)), url('image_3.png');
+      /* 🛠️ แก้ไขจุดที่ 1: เปลี่ยนชื่อไฟล์พื้นหลังเป็น IMG_8809.jpeg ให้ตรงกับ GitHub ของมึง */
+      background-image: linear-gradient(rgba(244, 241, 238, 0.85), rgba(244, 241, 238, 0.85)), url('IMG_8809.jpeg');
       background-size: cover;
       background-position: center;
       background-attachment: fixed;
@@ -58,7 +58,6 @@
       box-shadow:0 3px 20px rgba(0,0,0,0.3);
       position:sticky; top:0; z-index:100;
     }
-    /* ปรับแต่งเพื่อให้รองรับรูปแรกที่เป็นตราวงกลมอย่างสวยงาม */
     .logo-circle { 
       width:52px;
       height:52px;
@@ -212,9 +211,6 @@
     #toast { position:fixed;bottom:24px;right:24px;color:#fff;padding:12px 18px;border-radius:10px;font-size:0.86rem;box-shadow:0 8px 24px rgba(0,0,0,0.25);transform:translateY(80px);opacity:0;transition:all 0.35s ease;z-index:999;max-width:320px; }
     #toast.show { transform:translateY(0);opacity:1; }
 
-    /* ==========================================================================
-       ระบบจัดหน้า Mobile Responsive ปรับแต่งสัดส่วนดั้งเดิม
-       ========================================================================== */
     @media (max-width:1024px) { 
       .stats-row { grid-template-columns:repeat(2,1fr); gap:10px; } 
       .dash-grid { grid-template-columns:1fr; } 
@@ -258,7 +254,7 @@
 
 <header>
   <div class="logo-circle">
-    <img src="image.png" alt="ตราวิทยาลัย">
+    <img src="IMG_8808.jpeg" alt="ตราวิทยาลัย">
   </div>
   <div>
     <h1>ห้องพยาบาล – วิทยาลัยเทคนิคหาดใหญ่</h1>
@@ -356,7 +352,7 @@
     <div class="stat-box yel"><div class="stat-icon">🔴</div><div><div class="stat-val" id="d-urg">–</div><div class="stat-lbl">เร่งด่วน</div></div></div>
   </div>
   <div class="dash-grid">
-    <div class="chart-card"><div class="chart-title">📊 แวนกที่เข้ารับบริการ</div><div class="chart-wrap"><canvas id="chartDept"></canvas></div></div>
+    <div class="chart-card"><div class="chart-title">📊 แผนกที่เข้ารับบริการ</div><div class="chart-wrap"><canvas id="chartDept"></canvas></div></div>
     <div class="chart-card"><div class="chart-title">🚨 ระดับความเร่งด่วน</div><div class="chart-wrap"><canvas id="chartSev"></canvas></div></div>
   </div>
 </div>
@@ -393,7 +389,6 @@
   const db  = getFirestore(app);
   const col = collection(db, "nurse_records");
 
-  // clock
   function tick() {
     document.getElementById('live-clock').textContent =
       new Date().toLocaleDateString('th-TH',{weekday:'long',year:'numeric',month:'long',day:'numeric',hour:'2-digit',minute:'2-digit',second:'2-digit'});
@@ -414,7 +409,6 @@
     }
   });
 
-  // theme
   let dark = false;
   document.getElementById('themeBtn').addEventListener('click', () => {
     dark = !dark;
@@ -423,7 +417,6 @@
     rebuildCharts();
   });
 
-  // tabs
   document.querySelectorAll('.tab-btn').forEach(btn => {
     btn.addEventListener('click', () => {
       document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
@@ -434,7 +427,6 @@
     });
   });
 
-  // sound
   let soundOn = true;
   const soundBtn = document.getElementById('soundBtn');
   soundBtn.classList.add('on');
@@ -460,7 +452,6 @@
     } catch(e) {}
   }
 
-  // state
   let records = [], prevCount = -1, connected = false, curDetailId = null;
   let cDept = null, cSev = null;
 
@@ -477,11 +468,10 @@
     const newRecs = snap.docs.map(d => ({firestoreId:d.id,...d.data()}))
       .sort((a,b) => (b.ts?.toMillis?.()??0)-(a.ts?.toMillis?.()??0));
     const isNew = prevCount >= 0 && newRecs.length > prevCount;
-    const newIds = isNew ? newRecs.slice(0, newRecs.length - prevCount).map(r=>r.firestoreId) : [];
     if (isNew) beep(newRecs.slice(0, newRecs.length-prevCount).some(r=>r.severity==='เร่งด่วน'));
     prevCount = newRecs.length;
     records = newRecs;
-    renderTable(newIds);
+    renderTable(newRecs.slice(0, newRecs.length - prevCount).map(r=>r.firestoreId));
     updateStats();
     setSync(true);
   }, err => {
@@ -560,10 +550,6 @@
       </tr>`).join('');
   };
 
-  document.getElementById('searchBox').addEventListener('input', () => renderTable());
-  document.getElementById('filterDept').addEventListener('change', () => renderTable());
-  document.getElementById('filterStatus').addEventListener('change', () => renderTable());
-
   window.submitForm = async function() {
     const sid=document.getElementById('f-id').value.trim();
     const fn=document.getElementById('f-fname').value.trim();
@@ -593,8 +579,6 @@
     } catch(e) { toast('❌ '+e.message,'#922b21'); }
     btn.disabled=false; btn.innerHTML='✅ บันทึกการลงทะเบียน';
   };
-
-  document.getElementById('submitBtn').addEventListener('click', submitForm);
 
   window.markDone = async fid => {
     try { await updateDoc(doc(db,'nurse_records',fid),{status:'เสร็จสิ้น'}); toast('✅ อัปเดตสถานะเป็น "เสร็จสิ้น"','#0f6e56'); }
